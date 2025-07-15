@@ -15,7 +15,7 @@ struct CameraARView: View {
                     arCoordinator.capturarCubo()
                 }) {
                     Circle()
-                        .fill(arCoordinator.canCapture ? Color.red : Color.gray.opacity(0.5))
+                        .fill(arCoordinator.canCapture ? Color.gray : Color.gray.opacity(0.1))
                         .frame(width: 70, height: 70)
                         .overlay(
                             Image(systemName: "camera.viewfinder")
