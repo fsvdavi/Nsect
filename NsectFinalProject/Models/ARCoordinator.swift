@@ -94,8 +94,8 @@ class ARCoordinator: NSObject, ObservableObject {
             }
 
             self.boxEntity = insectEntity
-            let randomX = Float.random(in: -0.5...0.5)
-            let randomZ = Float.random(in: -0.5...0.5)
+            let randomX = Float.random(in: -0.2...0.2)
+            let randomZ = Float.random(in: -0.2...0.2)
             insectEntity.position = SIMD3<Float>(randomX, 0, randomZ)
             anchor.addChild(insectEntity)
             DispatchQueue.main.async {
