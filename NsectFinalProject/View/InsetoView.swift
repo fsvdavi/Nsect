@@ -1,108 +1,117 @@
 import SwiftUI
+import Shimmer
+import SDWebImageSwiftUI
+import UIKit
 
 struct InsetoView: View {
     var artropode: Artropode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // IMAGEM DESTACADA
-            AsyncImage(url: URL(string: artropode.imagemURL)) { image in
-                image
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+
+                // IMAGEM DESTACADA
+                WebImage(url: URL(string: artropode.imagemURL))
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(height: 220)
-                    .frame(maxWidth: .infinity)
+                    .onSuccess { image, data, cacheType in
+                        // Lógica de sucesso (opcional): aqui você pode fazer algo com a imagem carregada
+                        print("Imagem carregada com sucesso!")
+                    }
+                    .onFailure { error in
+                        // Lógica de falha (opcional): aqui você pode lidar com erros de carregamento
+                        print("Erro ao carregar imagem: \(error.localizedDescription)")
+                    }
+                    .placeholder { // <-- Abertura da closure para o placeholder
+                        Image(systemName: "leaf") // Sua imagem de placeholder
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100) // Exemplo de tamanho para o placeholder
+                            .foregroundColor(.gray)
+                    } // <-- Fechamento da closure para o placeholder
+                    .indicator(.activity) // <-- Modificador indicator (direto)
+                    .transition(.fade(duration: 0.5)) // <-- Modificador transition (direto)
+                    .scaledToFill()
+                    .frame(height: 260)
                     .clipped()
-                    .cornerRadius(20)
-                    .shadow(radius: 6)
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.gray.opacity(0.15))
-                    .frame(height: 220)
-                    .overlay(
-                        ProgressView().progressViewStyle(CircularProgressViewStyle())
-                    )
-            }
+                    .cornerRadius(25)
+                    .shadow(color: .green.opacity(0.4), radius: 12, x: 0, y: 5)
 
-            // NOME POPULAR (TÍTULO)
-            Text(artropode.nomePopular.capitalized)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundColor(.primary)
+                // NOME POPULAR
+                Text(artropode.nomePopular.capitalized)
+                    .font(.system(size: 30, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.green)
+                    .shimmering()
 
-            // NOME CIENTÍFICO
-            Text(artropode.nomeCientifico)
-                .italic()
-                .font(.system(size: 16, weight: .regular, design: .serif))
-                .foregroundColor(.secondary)
+                // NOME CIENTÍFICO
+                Text(artropode.nomeCientifico)
+                    .italic()
+                    .font(.system(size: 18, weight: .medium, design: .serif))
+                    .foregroundColor(.gray)
 
-            Divider().padding(.vertical, 4)
+                Divider()
 
-            // INFORMAÇÕES GERAIS
-            Group {
-                HStack {
-                    Label("Classe", systemImage: "leaf.fill")
-                    Spacer()
-                    Text(artropode.classe)
-                        .foregroundColor(.blue)
+                GroupBox(label: Label("Informações", systemImage: "info.circle.fill")) {
+                    InfoRow(title: "Classe", value: artropode.classe, icon: "leaf")
+                    InfoRow(title: "Habitat", value: artropode.habitat, icon: "globe.americas")
+                    InfoRow(title: "Tamanho / Peso", value: "\(artropode.tamanho) / \(artropode.peso)", icon: "scalemass")
+                }
+                .groupBoxStyle(.automatic)
+
+                GroupBox(label: Label("Descrição", systemImage: "text.book.closed")) {
+                    Text(artropode.descricao)
+                        .font(.body)
+                        .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
+                        .padding(.top, 4)
                 }
 
-                HStack {
-                    Label("Habitat", systemImage: "globe.americas.fill")
-                    Spacer()
-                    Text(artropode.habitat)
+                GroupBox(label: Label("Curiosidade", systemImage: "lightbulb.fill")) {
+                    Text(artropode.curiosidade)
+                        .font(.body)
                         .foregroundColor(.green)
-                }
-
-                HStack {
-                    Label("Tamanho / Peso", systemImage: "ruler.fill")
-                    Spacer()
-                    Text("\(artropode.tamanho) • \(artropode.peso)")
+                        .multilineTextAlignment(.leading)
+                        .padding(.top, 4)
                 }
             }
-            .font(.subheadline)
-
-            Divider().padding(.vertical, 4)
-
-            // DESCRIÇÃO E CURIOSIDADE
-            VStack(alignment: .leading, spacing: 6) {
-                Text("📘 Descrição")
-                    .font(.headline)
-                Text(artropode.descricao)
-                    .font(.body)
-                    .foregroundColor(.primary)
-
-                Text("🧠 Curiosidade")
-                    .font(.headline)
-                    .padding(.top, 4)
-                Text(artropode.curiosidade)
-                    .font(.body)
-                    .foregroundColor(.primary)
-            }
-
+            .padding()
         }
-        .padding()
         .background(
-            RoundedRectangle(cornerRadius: 24)
-                .fill(.ultraThinMaterial)
-                .shadow(radius: 6)
+            LinearGradient(colors: [.green.opacity(0.1), .white], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .ignoresSafeArea()
         )
-        .padding()
+    }
+}
+
+struct InfoRow: View {
+    var title: String
+    var value: String
+    var icon: String
+
+    var body: some View {
+        HStack(alignment: .top) {
+            Image(systemName: icon)
+                .foregroundColor(.green)
+            Text(title + ":")
+                .bold()
+            Spacer()
+            Text(value)
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 2)
     }
 }
 
 #Preview {
-    let insetoTeste = Artropode(
+    let inseto = Artropode(
         classe: "Insecta",
         nomeCientifico: "Odontomachus bauri",
-        nomePopular: "Formiga-de-mandíbula-trap",
+        nomePopular: "Formiga-de-mandíbula-armadilha",
         habitat: "Solo de florestas tropicais",
-        descricao: "Formiga que pode arremessar a si mesma com suas mandíbulas.",
-        curiosidade: "Ela consegue bater as mandíbulas com tanta força que se lança para trás para fugir de predadores.",
+        descricao: "Formiga que usa suas mandíbulas como catapultas para atacar ou fugir.",
+        curiosidade: "Pode atingir uma velocidade de 230 km/h com as mandíbulas.",
         tamanho: "1.3 cm",
         peso: "0.004 g",
-        imagemURL: "https://upload.wikimedia.org/wikipedia/commons/3/33/Odontomachus_bauri.png"
-    )
-    
-    return InsetoView(artropode: insetoTeste)
+        imagemURL: "https://static.inaturalist.org/photos/52135431/large.jpeg"
+     )
+    return InsetoView(artropode: inseto)
 }
-
