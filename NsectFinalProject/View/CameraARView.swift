@@ -12,7 +12,7 @@ struct CameraARView: View {
                 Spacer()
                 
                 Button(action: {
-                    arCoordinator.capturarCubo()
+                    arCoordinator.capturarNsect()
                 }) {
                     Circle()
                         .fill(arCoordinator.canCapture ? Color.gray : Color.gray.opacity(0.1))
@@ -25,6 +25,22 @@ struct CameraARView: View {
                 }
                 .disabled(!arCoordinator.canCapture)
                 .padding(.bottom, 40)
+                VStack {
+                    if let mensagem = arCoordinator.mensagem {
+                        Text(mensagem)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Color(red: 0.0, green: 0.3, blue: 0.0).opacity(0.9))
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .padding(.top, 20)
+                            .transition(.opacity)
+                            .animation(.easeInOut, value: mensagem)
+                    }
+                    Spacer()
+                }
+                .padding(.top, 10)
+
             }
         }
     }

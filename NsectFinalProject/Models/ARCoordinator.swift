@@ -23,6 +23,8 @@ class ARCoordinator: NSObject, ObservableObject {
     var arView: ARView?
 
     @Published var canCapture = false
+    @Published var mensagem: String? = nil
+
 
     func configurarCenaAR() -> ARView {
         let arView = ARView(frame: .zero)
@@ -50,7 +52,7 @@ class ARCoordinator: NSObject, ObservableObject {
     }
 
 
-    func capturarCubo() {
+    func capturarNsect() {
         guard let arView = arView,
               let boxEntity = boxEntity else { return }
 
@@ -70,6 +72,14 @@ class ARCoordinator: NSObject, ObservableObject {
                 boxEntity.removeFromParent()
                 self.boxEntity = nil
                 print("Inseto capturado!")
+                DispatchQueue.main.async {
+                    self.mensagem = "Inseto capturado!"
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        self.mensagem = nil
+                    }
+                }
+
             }
         }
     }
@@ -121,6 +131,14 @@ class ARCoordinator: NSObject, ObservableObject {
             let randomZ = Float.random(in: -0.5...0.5)
             insectEntity.position = SIMD3<Float>(randomX, 0, randomZ)
             anchor.addChild(insectEntity)
+            DispatchQueue.main.async {
+                self.mensagem = "Inseto encontrado!"
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.mensagem = nil
+                }
+            }
+
             print("Inseto carregado: \(insetoEscolhido)")
         } catch {
             print("Erro ao carregar inseto '\(insetoEscolhido)': \(error)")
