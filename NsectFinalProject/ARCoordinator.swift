@@ -10,6 +10,15 @@ import ARKit
 import SwiftUI
 
 class ARCoordinator: NSObject, ObservableObject {
+    let insetosDisponiveis = ["ant", "Ladybug", "mantis", "RedAnt", "Scorpion"]
+    let insetoEscalas: [String: SIMD3<Float>] = [
+        "ant": SIMD3<Float>(0.02, 0.02, 0.02),
+        "Ladybug": SIMD3<Float>(0.09, 0.09, 0.09),
+        "mantis": SIMD3<Float>(0.2, 0.2, 0.2),
+        "RedAnt": SIMD3<Float>(0.01, 0.01, 0.01),
+        "Scorpion": SIMD3<Float>(0.006, 0.006, 0.006)
+    ]
+
     var boxEntity: ModelEntity?
     var arView: ARView?
 
@@ -25,26 +34,21 @@ class ARCoordinator: NSObject, ObservableObject {
         arView.session.run(config)
 
         let anchor = AnchorEntity(plane: .horizontal)
-
-        do {
-            let insectEntity = try ModelEntity.loadModel(named: "ant")
-            insectEntity.scale = SIMD3<Float>(0.05, 0.05, 0.05)
-            self.boxEntity = insectEntity
-            anchor.addChild(insectEntity)
-        } catch {
-            print("Erro ao carregar o inseto: \(error)")
-        }
-
-        // Adiciona o anchor na cena
         arView.scene.anchors.append(anchor)
 
-        // Timer para verificar se pode capturar
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+        carregarInsetoAleatorio(anchor: anchor)
+
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             self.verificarSePodeCapturar()
+        }
+
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.carregarInsetoAleatorio(anchor: anchor)
         }
 
         return arView
     }
+
 
     func capturarCubo() {
         guard let arView = arView,
@@ -100,4 +104,27 @@ class ARCoordinator: NSObject, ObservableObject {
             }
         }
     }
+    func carregarInsetoAleatorio(anchor: AnchorEntity) {
+        guard boxEntity == nil else { return }
+
+        let insetoEscolhido = insetosDisponiveis.randomElement() ?? "ant"
+
+        do {
+            let insectEntity = try ModelEntity.loadModel(named: insetoEscolhido)
+            insectEntity.scale = insetoEscalas[insetoEscolhido] ?? SIMD3<Float>(0.05, 0.05, 0.05)
+            if insetoEscolhido == "mantis" {
+                insectEntity.transform.rotation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+            }
+
+            self.boxEntity = insectEntity
+            let randomX = Float.random(in: -0.5...0.5)
+            let randomZ = Float.random(in: -0.5...0.5)
+            insectEntity.position = SIMD3<Float>(randomX, 0, randomZ)
+            anchor.addChild(insectEntity)
+            print("Inseto carregado: \(insetoEscolhido)")
+        } catch {
+            print("Erro ao carregar inseto '\(insetoEscolhido)': \(error)")
+        }
+    }
+
 }
