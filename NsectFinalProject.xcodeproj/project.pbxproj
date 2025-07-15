@@ -6,21 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		2234E48B2E26CFE50062D6A9 /* Catálogo - catálogo_completo.csv in Resources */ = {isa = PBXBuildFile; fileRef = 2234E48A2E26CFE50062D6A9 /* Catálogo - catálogo_completo.csv */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
-		2234E48A2E26CFE50062D6A9 /* Catálogo - catálogo_completo.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Catálogo - catálogo_completo.csv"; sourceTree = "<group>"; };
 		229F9CE92E18673600619C20 /* NsectFinalProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NsectFinalProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2234E48D2E26D0F00062D6A9 /* Objects */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Objects;
-			sourceTree = "<group>";
-		};
 		229F9CEB2E18673600619C20 /* NsectFinalProject */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = NsectFinalProject;
@@ -42,8 +32,6 @@
 		229F9CE02E18673600619C20 = {
 			isa = PBXGroup;
 			children = (
-				2234E48D2E26D0F00062D6A9 /* Objects */,
-				2234E48A2E26CFE50062D6A9 /* Catálogo - catálogo_completo.csv */,
 				229F9CEB2E18673600619C20 /* NsectFinalProject */,
 				229F9CEA2E18673600619C20 /* Products */,
 			);
@@ -73,7 +61,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2234E48D2E26D0F00062D6A9 /* Objects */,
 				229F9CEB2E18673600619C20 /* NsectFinalProject */,
 			);
 			name = NsectFinalProject;
@@ -122,7 +109,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2234E48B2E26CFE50062D6A9 /* Catálogo - catálogo_completo.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
