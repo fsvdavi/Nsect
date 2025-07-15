@@ -2,7 +2,7 @@ import SwiftData
 import Foundation
 
 @Model
-class Artrópode {
+class Artropode {
     var classe: String
     var nomeCientifico: String
     var nomePopular: String
@@ -26,8 +26,8 @@ class Artrópode {
     }
 }
 
-func carregarArtrópodes() -> [Artrópode] {
-    var lista: [Artrópode] = []
+func carregarArtrópodes() -> [Artropode] {
+    var lista: [Artropode] = []
 
     guard let caminho = Bundle.main.path(forResource: "Catálogo - catálogo_completo", ofType: "csv") else {
         print("❌ Arquivo não encontrado.")
@@ -43,7 +43,7 @@ func carregarArtrópodes() -> [Artrópode] {
             let colunas = linha.components(separatedBy: ",")
 
             if colunas.count >= 9 {
-                let artrópode = Artrópode(
+                let artrópode = Artropode(
                     classe: colunas[0],
                     nomeCientifico: colunas[1],
                     nomePopular: colunas[2],
