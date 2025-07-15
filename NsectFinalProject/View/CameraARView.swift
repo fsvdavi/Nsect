@@ -2,12 +2,12 @@ import SwiftUI
 
 struct CameraARView: View {
     @StateObject private var arCoordinator = ARCoordinator()
-    
+
     var body: some View {
         ZStack {
             ARViewContainerWrapper(coordinator: arCoordinator)
                 .edgesIgnoringSafeArea(.all)
-            
+
             VStack {
                 if let mensagem = arCoordinator.mensagem {
                     Text(mensagem)
@@ -22,7 +22,7 @@ struct CameraARView: View {
                 }
                 Spacer()
             }
-            
+
             VStack {
                 Spacer()
                 

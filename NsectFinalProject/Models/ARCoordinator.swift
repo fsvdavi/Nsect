@@ -44,44 +44,11 @@ class ARCoordinator: NSObject, ObservableObject {
             self.verificarSePodeCapturar()
         }
 
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
             self.carregarInsetoAleatorio(anchor: anchor)
         }
 
         return arView
-    }
-
-
-    func capturarNsect() {
-        guard let arView = arView,
-              let boxEntity = boxEntity else { return }
-
-        let center = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
-        let results = arView.raycast(from: center, allowing: .estimatedPlane, alignment: .horizontal)
-
-        if let firstResult = results.first {
-            let raycastPosition = SIMD3<Float>(
-                firstResult.worldTransform.columns.3.x,
-                firstResult.worldTransform.columns.3.y,
-                firstResult.worldTransform.columns.3.z
-            )
-
-            let distance = distance(boxEntity.position(relativeTo: nil), raycastPosition)
-
-            if distance < 0.2 {
-                boxEntity.removeFromParent()
-                self.boxEntity = nil
-                print("Inseto capturado!")
-                DispatchQueue.main.async {
-                    self.mensagem = "Inseto capturado!"
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        self.mensagem = nil
-                    }
-                }
-
-            }
-        }
     }
 
     func verificarSePodeCapturar() {
@@ -144,5 +111,49 @@ class ARCoordinator: NSObject, ObservableObject {
             print("Erro ao carregar inseto '\(insetoEscolhido)': \(error)")
         }
     }
+    func capturarNsect() {
+        guard let arView = arView,
+              let boxEntity = boxEntity else { return }
+
+        let center = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
+        let results = arView.raycast(from: center, allowing: .estimatedPlane, alignment: .horizontal)
+
+        if let firstResult = results.first {
+            let raycastPosition = SIMD3<Float>(
+                firstResult.worldTransform.columns.3.x,
+                firstResult.worldTransform.columns.3.y,
+                firstResult.worldTransform.columns.3.z
+            )
+
+            let distance = distance(boxEntity.position(relativeTo: nil), raycastPosition)
+
+            if distance < 0.2 {
+                // Corrigido: mantém posição e rotação, só muda escala
+                let transform = Transform(
+                    scale: SIMD3<Float>(repeating: 0.001),
+                    rotation: boxEntity.transform.rotation,
+                    translation: boxEntity.transform.translation
+                )
+
+                boxEntity.move(
+                    to: transform,
+                    relativeTo: boxEntity.parent,
+                    duration: 0.8,
+                    timingFunction: .easeInOut
+                )
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                    self.boxEntity?.removeFromParent()
+                    self.boxEntity = nil
+                    self.mensagem = "Inseto capturado!"
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        self.mensagem = nil
+                    }
+                }
+            }
+        }
+    }
+
 
 }
