@@ -12,8 +12,9 @@ class Artropode {
     var tamanho: String
     var peso: String
     var imagemURL: String
+    var Modelo3d: String
 
-    init(classe: String, nomeCientifico: String, nomePopular: String, habitat: String, descricao: String, curiosidade: String, tamanho: String, peso: String, imagemURL: String) {
+    init(classe: String, nomeCientifico: String, nomePopular: String, habitat: String, descricao: String, curiosidade: String, tamanho: String, peso: String, imagemURL: String, Modelo3d: String) {
         self.classe = classe
         self.nomeCientifico = nomeCientifico
         self.nomePopular = nomePopular
@@ -23,13 +24,14 @@ class Artropode {
         self.tamanho = tamanho
         self.peso = peso
         self.imagemURL = imagemURL
+        self.Modelo3d = Modelo3d
     }
 }
 
 func carregarArtrópodes() -> [Artropode] {
     var lista: [Artropode] = []
 
-    guard let caminho = Bundle.main.path(forResource: "Catálogo - catálogo_completo", ofType: "csv") else {
+    guard let caminho = Bundle.main.path(forResource: "Catálogo", ofType: "csv") else {
         print("❌ Arquivo não encontrado.")
         return []
     }
@@ -52,7 +54,8 @@ func carregarArtrópodes() -> [Artropode] {
                     curiosidade: colunas[5],
                     tamanho: colunas[6],
                     peso: colunas[7],
-                    imagemURL: colunas[8]
+                    imagemURL: colunas[8],
+                    Modelo3d: colunas[9]
                 )
                 lista.append(artrópode)
             }

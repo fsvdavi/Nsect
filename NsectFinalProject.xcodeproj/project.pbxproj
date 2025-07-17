@@ -9,10 +9,12 @@
 /* Begin PBXBuildFile section */
 		2234E4F42E26E1F40062D6A9 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F32E26E1F40062D6A9 /* Shimmer */; };
 		2234E4F72E26E2400062D6A9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F62E26E2400062D6A9 /* SDWebImageSwiftUI */; };
+		22F561E82E29923D00CC46D2 /* Catálogo.csv in Resources */ = {isa = PBXBuildFile; fileRef = 22F561E72E29923D00CC46D2 /* Catálogo.csv */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		229F9CE92E18673600619C20 /* NsectFinalProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NsectFinalProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		22F561E72E29923D00CC46D2 /* Catálogo.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Catálogo.csv"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,6 +41,7 @@
 		229F9CE02E18673600619C20 = {
 			isa = PBXGroup;
 			children = (
+				22F561E72E29923D00CC46D2 /* Catálogo.csv */,
 				229F9CEB2E18673600619C20 /* NsectFinalProject */,
 				229F9CEA2E18673600619C20 /* Products */,
 			);
@@ -122,6 +125,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22F561E82E29923D00CC46D2 /* Catálogo.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
