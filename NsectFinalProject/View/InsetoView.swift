@@ -1,117 +1,189 @@
 import SwiftUI
-import Shimmer
-import SDWebImageSwiftUI
-import UIKit
+import SceneKit
+import RealityKit
 
-//struct InsetoView: View {
-//    var artropode: Artropode
-//
-//    var body: some View {
-//        ScrollView {
-//            VStack(alignment: .leading, spacing: 16) {
-//
-//                // IMAGEM DESTACADA
-//                WebImage(url: URL(string: artropode.imagemURL))
-//                    .resizable()
-//                    .onSuccess { image, data, cacheType in
-//                        // Lógica de sucesso (opcional): aqui você pode fazer algo com a imagem carregada
-//                        print("Imagem carregada com sucesso!")
-//                    }
-//                    .onFailure { error in
-//                        // Lógica de falha (opcional): aqui você pode lidar com erros de carregamento
-//                        print("Erro ao carregar imagem: \(error.localizedDescription)")
-//                    }
-//                    .placeholder { // <-- Abertura da closure para o placeholder
-//                        Image(systemName: "leaf") // Sua imagem de placeholder
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 100, height: 100) // Exemplo de tamanho para o placeholder
-//                            .foregroundColor(.gray)
-//                    } // <-- Fechamento da closure para o placeholder
-//                    .indicator(.activity) // <-- Modificador indicator (direto)
-//                    .transition(.fade(duration: 0.5)) // <-- Modificador transition (direto)
-//                    .scaledToFill()
-//                    .frame(height: 260)
-//                    .clipped()
-//                    .cornerRadius(25)
-//                    .shadow(color: .green.opacity(0.4), radius: 12, x: 0, y: 5)
-//
-//                // NOME POPULAR
-//                Text(artropode.nomePopular.capitalized)
-//                    .font(.system(size: 30, weight: .heavy, design: .rounded))
-//                    .foregroundStyle(.green)
-//                    .shimmering()
-//
-//                // NOME CIENTÍFICO
-//                Text(artropode.nomeCientifico)
-//                    .italic()
-//                    .font(.system(size: 18, weight: .medium, design: .serif))
-//                    .foregroundColor(.gray)
-//
-//                Divider()
-//
-//                GroupBox(label: Label("Informações", systemImage: "info.circle.fill")) {
-//                    InfoRow(title: "Classe", value: artropode.classe, icon: "leaf")
-//                    InfoRow(title: "Habitat", value: artropode.habitat, icon: "globe.americas")
-//                    InfoRow(title: "Tamanho / Peso", value: "\(artropode.tamanho) / \(artropode.peso)", icon: "scalemass")
-//                }
-//                .groupBoxStyle(.automatic)
-//
-//                GroupBox(label: Label("Descrição", systemImage: "text.book.closed")) {
-//                    Text(artropode.descricao)
-//                        .font(.body)
-//                        .foregroundColor(.primary)
-//                        .multilineTextAlignment(.leading)
-//                        .padding(.top, 4)
-//                }
-//
-//                GroupBox(label: Label("Curiosidade", systemImage: "lightbulb.fill")) {
-//                    Text(artropode.curiosidade)
-//                        .font(.body)
-//                        .foregroundColor(.green)
-//                        .multilineTextAlignment(.leading)
-//                        .padding(.top, 4)
-//                }
-//            }
-//            .padding()
-//        }
-//        .background(
-//            LinearGradient(colors: [.green.opacity(0.1), .white], startPoint: .topLeading, endPoint: .bottomTrailing)
-//                .ignoresSafeArea()
-//        )
-//    }
-//}
-//
-//struct InfoRow: View {
-//    var title: String
-//    var value: String
-//    var icon: String
-//
-//    var body: some View {
-//        HStack(alignment: .top) {
-//            Image(systemName: icon)
-//                .foregroundColor(.green)
-//            Text(title + ":")
-//                .bold()
-//            Spacer()
-//            Text(value)
-//                .foregroundColor(.secondary)
-//        }
-//        .padding(.vertical, 2)
-//    }
-//}
-//
-//#Preview {
-//    let inseto = Artropode(
-//        classe: "Insecta",
-//        nomeCientifico: "Odontomachus bauri",
-//        nomePopular: "Formiga-de-mandíbula-armadilha",
-//        habitat: "Solo de florestas tropicais",
-//        descricao: "Formiga que usa suas mandíbulas como catapultas para atacar ou fugir.",
-//        curiosidade: "Pode atingir uma velocidade de 230 km/h com as mandíbulas.",
-//        tamanho: "1.3 cm",
-//        peso: "0.004 g",
-//        imagemURL: "https://static.inaturalist.org/photos/52135431/large.jpeg"
-//     )
-//    return InsetoView(artropode: inseto)
-//}
+struct InsetoDetailView: View {
+    let artropode: Artropode
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            Color(.systemGray6).ignoresSafeArea()
+
+            // Header
+            VStack(spacing: 0) {
+                ZStack {
+                    // Fundo verde com cantos arredondados inferior
+                    RoundedCorner(radius: 30, corners: [.bottomLeft, .bottomRight])
+                        .fill(Color.green)
+                        .frame(height: 180)
+
+                    // Logo
+                    Text("Nsect")
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundColor(.white)
+                        .shadow(radius: 5)
+                }
+                .overlay(
+                    HStack {
+                        Button(action: {}) {
+                            Image(systemName: "chevron.left")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                        }
+                        Spacer()
+                        Button(action: {}) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.title2)
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 50)
+                )
+
+                Spacer()
+            }
+
+            // Conteúdo
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Text(String(format: "#%02d", 5))
+                            .font(.title2).fontWeight(.bold)
+                            .foregroundColor(Color.green)
+                        Spacer()
+                        Text(artropode.nomePopular.capitalized)
+                            .font(.title2).fontWeight(.bold)
+                    }
+                    .padding(.horizontal)
+
+                    // Card da imagem 3D
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 50)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.green.opacity(0.6), Color.green]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(height: 200)
+
+                        // Usando SceneView para exibir .usdz
+                        SceneView(
+                            scene: SCNScene(named: "ant.scn".components(separatedBy: "/").last!),
+                            options: [.autoenablesDefaultLighting, .allowsCameraControl]
+                        )
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 180)
+                    }
+                    .padding(.horizontal)
+
+                    // Grid de informações
+                    VStack {
+                        HStack {
+                            infoColumn(title: "Tamanho", value: artropode.tamanho)
+                            Spacer()
+                            infoColumn(title: "Peso", value: artropode.peso)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 12)
+
+                        HStack {
+                            infoColumn(title: "Classe", value: artropode.classe)
+                            Spacer()
+                            infoColumn(title: "Habitat", value: artropode.habitat)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom, 16)
+                    }
+                    .background(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.green, Color.green.opacity(0.6)]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .cornerRadius(20)
+                    .padding(.horizontal)
+
+                    Spacer(minLength: 100)
+                }
+                .padding(.top, 200)
+            }
+
+            // Botão flutuante + e Tab Bar
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: {}) {
+                        Image(systemName: "plus")
+                            .font(.largeTitle)
+                            .foregroundColor(.white)
+                            .frame(width: 60, height: 60)
+                            .background(Color.green)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    }
+                    Spacer()
+                }
+                .offset(y: -30)
+
+                HStack {
+                    Spacer()
+                    Image(systemName: "house.fill")
+                        .font(.title2)
+                        .foregroundColor(.green)
+                    Spacer()
+                    Spacer()
+                    Image(systemName: "ellipsis.bubble")
+                        .font(.title2)
+                        .foregroundColor(.green)
+                    Spacer()
+                }
+                .padding(.vertical, 10)
+                .background(Color.white.shadow(radius: 2))
+            }
+        }
+    }
+
+    // Helper para colunas info
+    @ViewBuilder
+    func infoColumn(title: String, value: String) -> some View {
+        VStack(alignment: .center, spacing: 4) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white)
+            Text(value)
+                .font(.subheadline)
+                .foregroundColor(.white.opacity(0.8))
+        }
+    }
+}
+
+// Shape de cantos seletivos
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}
+
+// Preview com carregarArtrópodes
+struct InsetoDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        if let first = carregarArtrópodes().first {
+            InsetoDetailView(artropode: first)
+        } else {
+            Text("Nenhum inseto disponível")
+        }
+    }
+}
