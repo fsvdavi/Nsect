@@ -5,30 +5,36 @@
 //  Created by found on 17/07/25.
 //
 
-import SwiftUI
-
-struct TabBarView: View{
-    var body: some View{
-        
-        TabView {
-            Text("Home")
-                .tabItem {
-                    Image(systemName: "house")
-                    Text("Home")
-                }
-            Text("Find New")
-                .tabItem {
-                    Image(systemName: "camera")
-                    Text("Find New")
-                }
-        }
-        
-        
-    }
-}
-
-
-
-#Preview {
-    TabBarView()
-}
+//import SwiftUI
+//
+//struct TabBarView: View{
+//    var body: some View{
+//        
+//        TabView {
+//            Text("Home")
+//                .tabItem {
+//                    Image(systemName: "house")
+//                    Text("Home")
+//                }
+//            
+//            Text("Find New")
+//                .tabItem {
+//                    Image(systemName: "camera")
+//                    Text("Find New")
+//                }
+//            
+//            Text("Profile")
+//                .tabItem{
+//                    Image(systemName: "person.crop.circle")
+//                    Text("Profile")
+//                }
+//            
+//            
+//        }
+//    }
+//    
+//}
+//
+//#Preview {
+//    TabBarView()
+//}

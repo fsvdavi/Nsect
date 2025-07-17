@@ -12,7 +12,7 @@ struct HomeView: View {
         GeometryReader { geometry in
             ZStack {
                 
-//                // Fundo com imagem de floresta e cor base
+             
 //                Image("florestaFundo") // nome da imagem de fundo
 //                    .resizable()
 //                    .scaledToFill()
@@ -38,12 +38,11 @@ struct HomeView: View {
                             .frame(height: 80)
                             .padding(.horizontal, 30)
                     }
-//                    .padding(.top, geometry.safeAreaInsets.top + 5)
-//                    .padding(.bottom, 10)
+
 
                     Spacer()
 
-                    // Imagem do mapa do Brasil maior
+                    
                     Image("brazilMap")
 //                        .resizable()
 //                        .aspectRatio(contentMode: .fit)
