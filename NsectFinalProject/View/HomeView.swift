@@ -10,72 +10,87 @@ import SwiftUI
 struct HomeView: View {
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 0) {
+            ZStack {
                 
-                // Cabeçalho
-                ZStack {
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color("DarkGreen"))
-                        .frame(height: 100)
-                        .shadow(radius: 5)
-                        .padding(.horizontal)
-                    
-                    // Exemplo de conteúdo no cabeçalho
-                    Text("Catálogo de Artrópodes")
-                        .foregroundColor(.white)
-                        .font(.headline)
-                }
-                .padding(.top, geometry.safeAreaInsets.top)
+//                // Fundo com imagem de floresta e cor base
+//                Image("florestaFundo") // nome da imagem de fundo
+//                    .resizable()
+//                    .scaledToFill()
+//                    .opacity(0.15)
+//                    .ignoresSafeArea()
+//                
+//                Color(.systemGray6)
+//                    .ignoresSafeArea()
+//                
+                VStack(spacing: 0) {
 
-                Spacer(minLength: 20)
                 
-                // Imagem do Mapa
-                Image("brazilMap")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: geometry.size.width * 0.95,
-                           maxHeight: geometry.size.height * 0.5)
-                    .padding()
-
-                Spacer()
-
-                // Barra Inferior
-                HStack {
-                    Spacer()
-                    
-                    Image(systemName: "house.fill")
-                        .font(.system(size: 24))
-                    
-                    Spacer()
-                    
                     ZStack {
-                        Circle()
-                            .fill(Color("DarkGreen"))
-                            .frame(width: 60, height: 60)
-                            .shadow(radius: 4)
-                        
-                        Image(systemName: "camera")
-                            .foregroundColor(.white)
-                            .font(.system(size: 28))
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color(red: 0.0, green: 0.4, blue: 0.2))
+                            .frame(height: 110)
+                            .shadow(radius: 5)
+                            .padding(.horizontal)
+
+                        Image("nsectTitle")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 80)
+                            .padding(.horizontal, 30)
                     }
-                    
+//                    .padding(.top, geometry.safeAreaInsets.top + 5)
+//                    .padding(.bottom, 10)
+
                     Spacer()
-                    
-                    Image(systemName: "person.crop.circle")
-                        .font(.system(size: 24))
-                    
+
+                    // Imagem do mapa do Brasil maior
+                    Image("brazilMap")
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: geometry.size.width * 1.25,
+                               maxHeight: geometry.size.height * 1.1)
+                        .clipped()
+                        .padding(.horizontal)
+
                     Spacer()
+
+                    // Barra inferior mais fina e rente ao fundo
+                    HStack {
+                        Spacer()
+
+                        Image(systemName: "house.fill")
+                            .font(.system(size: 24))
+
+                        Spacer()
+
+                        ZStack {
+                            Circle()
+                                .fill(Color(red: 0.0, green: 0.4, blue: 0.2))
+                                .frame(width: 55, height: 55)
+
+                            Image(systemName: "camera")
+                                .foregroundColor(.white)
+                                .font(.system(size: 26))
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "person.crop.circle")
+                            .font(.system(size: 24))
+
+                        Spacer()
+                    }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(radius: 3)
+                            .edgesIgnoringSafeArea(.bottom)
+                    )
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color.white)
-                        .shadow(radius: 5)
-                )
+                .frame(width: geometry.size.width, height: geometry.size.height)
             }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .background(Color(.systemGray6))
-            .ignoresSafeArea(.all, edges: .bottom)
         }
     }
 }
