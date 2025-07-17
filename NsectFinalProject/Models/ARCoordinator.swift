@@ -21,7 +21,8 @@ class ARCoordinator: NSObject, ObservableObject {
 
     var boxEntity: ModelEntity?
     var arView: ARView?
-
+    
+    @Published var showConfetti = false
     @Published var canCapture = false
     @Published var mensagem: String? = nil
 
@@ -128,9 +129,8 @@ class ARCoordinator: NSObject, ObservableObject {
             let distance = distance(boxEntity.position(relativeTo: nil), raycastPosition)
 
             if distance < 0.2 {
-                // Corrigido: mantém posição e rotação, só muda escala
                 let transform = Transform(
-                    scale: SIMD3<Float>(repeating: 0.001),
+                    scale: SIMD3<Float>(repeating: 0.0),
                     rotation: boxEntity.transform.rotation,
                     translation: boxEntity.transform.translation
                 )
@@ -146,7 +146,6 @@ class ARCoordinator: NSObject, ObservableObject {
                     self.boxEntity?.removeFromParent()
                     self.boxEntity = nil
                     self.mensagem = "Inseto capturado!"
-
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.mensagem = nil
                     }
@@ -154,6 +153,4 @@ class ARCoordinator: NSObject, ObservableObject {
             }
         }
     }
-
-
 }
