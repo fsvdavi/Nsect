@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RoundedCorners: Shape {
+    
     var radius: CGFloat = 25.0
     var corners: UIRectCorner = [.bottomLeft, .bottomRight]
 

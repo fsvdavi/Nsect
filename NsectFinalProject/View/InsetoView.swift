@@ -30,7 +30,7 @@ struct InsetoDetailView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
-                        Text(String(format: "#%02d", artropode.id))
+                        Text("#0\(artropode.id)")
                             .font(.title2).fontWeight(.bold)
                             .foregroundColor(Color.green)
                         Spacer()
@@ -79,6 +79,33 @@ struct InsetoDetailView: View {
                         }
                         .padding(.horizontal)
                         .padding(.bottom, 16)
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            Group {
+                                Text("Nome científico:")
+                                    .font(.headline)
+                                Text(artropode.nomeCientifico)
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+
+                                Text("Descrição:")
+                                    .font(.headline)
+                                    .padding(.top, 4)
+                                Text(artropode.descricao)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+
+                                Text("Curiosidade:")
+                                    .font(.headline)
+                                    .padding(.top, 4)
+                                Text(artropode.curiosidade)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                            }
+                            .padding(.horizontal)
+                        }
+                        .padding(.bottom, 16)
+
                     }
                     .background(
                         LinearGradient(
@@ -165,8 +192,8 @@ struct InsetoDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let artrópodes = carregarArtropodes()
         
-        if artrópodes.indices.contains(0) {
-            InsetoDetailView(artropode: artrópodes[0])
+        if artrópodes.indices.contains(3) {
+            InsetoDetailView(artropode: artrópodes[3])
         } else {
             Text("Nenhum inseto disponível")
         }
