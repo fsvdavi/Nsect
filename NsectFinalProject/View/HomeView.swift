@@ -9,73 +9,115 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                
-                // Cabeçalho
-                ZStack {
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color("DarkGreen"))
-                        .frame(height: 100)
-                        .shadow(radius: 5)
-                        .padding(.horizontal)
-                    
-                    // Exemplo de conteúdo no cabeçalho
-                    Text("Catálogo de Artrópodes")
-                        .foregroundColor(.white)
-                        .font(.headline)
-                }
-                .padding(.top, geometry.safeAreaInsets.top)
-
-                Spacer(minLength: 20)
-                
-                // Imagem do Mapa
-                Image("brazilMap")
+        NavigationStack {
+            ZStack {
+              
+                Image("forestBackground")
                     .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: geometry.size.width * 0.95,
-                           maxHeight: geometry.size.height * 0.5)
-                    .padding()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                    .opacity(0.8)
+                    .ignoresSafeArea()
 
-                Spacer()
-
-                // Barra Inferior
-                HStack {
-                    Spacer()
-                    
-                    Image(systemName: "house.fill")
-                        .font(.system(size: 24))
-                    
-                    Spacer()
-                    
+             
+                GeometryReader { geometry in
                     ZStack {
-                        Circle()
-                            .fill(Color("DarkGreen"))
-                            .frame(width: 60, height: 60)
-                            .shadow(radius: 4)
                         
-                        Image(systemName: "camera")
-                            .foregroundColor(.white)
-                            .font(.system(size: 28))
+//                        // deixar esbranquicado
+//                        Color(.systemGray6)
+//                            .opacity(0.5)
+//                            .ignoresSafeArea()
+
+                        VStack(spacing: 0) {
+                            // Topo
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color(red: 0.0, green: 0.4, blue: 0.2))
+                                    .frame(height: 110)
+                                    .shadow(radius: 5)
+                                    .padding(.horizontal)
+
+                                Image("nsectTitle")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 100)
+                                    .padding(.horizontal, 30)
+                            }
+
+                            Spacer()
+
+                            // Mapa
+                            
+                            Image("brazilMap")
+                                .resizable()
+                                .scaledToFit()
+                                .scaleEffect(1.35)
+                                .shadow(radius: 20)
+                            
+
+                            Spacer()
+                        }
+
+                        // Barra inferior
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+
+                                VStack(spacing: 2) {
+                                    Image(systemName: "house.fill")
+                                        .font(.system(size: 22))
+                                    Text("Home")
+                                        .font(.caption2)
+                                }
+                                .foregroundColor(.gray)
+
+                                Spacer()
+
+                                NavigationLink(destination: CameraARView()) {
+                                    VStack(spacing: 2) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color(red: 0.0, green: 0.4, blue: 0.2))
+                                                .frame(width: 55, height: 55)
+
+                                            Image(systemName: "camera")
+                                                .foregroundColor(.white)
+                                                .font(.system(size: 26))
+                                        }
+                                        Text("Find New")
+                                            .font(.caption2)
+                                            .foregroundColor(.primary)
+                                    }
+                                }
+
+                                Spacer()
+
+                                NavigationLink(destination: InventoryInsectView()) {
+                                    VStack(spacing: 2) {
+                                        Image(systemName: "person.crop.circle")
+                                            .font(.system(size: 22))
+                                        Text("Profile")
+                                            .font(.caption2)
+                                    }
+                                    .foregroundColor(.gray)
+                                }
+
+                                Spacer()
+                            }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(
+                                Color.white
+                                    .clipShape(RoundedRectangle(cornerRadius: 25))
+                                    .shadow(radius: 3)
+                            )
+                        }
+                        .ignoresSafeArea(.all, edges: .bottom)
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "person.crop.circle")
-                        .font(.system(size: 24))
-                    
-                    Spacer()
                 }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 25)
-                        .fill(Color.white)
-                        .shadow(radius: 5)
-                )
             }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .background(Color(.systemGray6))
-            .ignoresSafeArea(.all, edges: .bottom)
         }
     }
 }
@@ -83,3 +125,4 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
+
