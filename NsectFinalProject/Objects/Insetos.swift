@@ -42,7 +42,45 @@ class Artropode {
     }
 }
 
-func carregarArtrópodes() -> [Artropode] {
+/// Função auxiliar para separar campos CSV considerando aspas
+func parseCSVLine(_ line: String) -> [String] {
+    var results: [String] = []
+    var current = ""
+    var insideQuotes = false
+    let characters = Array(line)
+
+    var i = 0
+    while i < characters.count {
+        let char = characters[i]
+
+        if char == "\"" {
+            if insideQuotes && i + 1 < characters.count && characters[i + 1] == "\"" {
+                // Aspas escapadas dentro de um campo
+                current.append("\"")
+                i += 1
+            } else {
+                // Abre ou fecha aspas
+                insideQuotes.toggle()
+            }
+        } else if char == "," && !insideQuotes {
+            // Separador de campo
+            let trimmed = current.trimmingCharacters(in: .whitespaces)
+            results.append(trimmed.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
+            current = ""
+        } else {
+            // Caractere normal
+            current.append(char)
+        }
+        i += 1
+    }
+    // Último campo
+    let trimmed = current.trimmingCharacters(in: .whitespaces)
+    results.append(trimmed.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
+
+    return results
+}
+
+func carregarArtropodes() -> [Artropode] {
     var lista: [Artropode] = []
 
     guard let caminho = Bundle.main.path(forResource: "Catálogo", ofType: "csv") else {
@@ -55,8 +93,10 @@ func carregarArtrópodes() -> [Artropode] {
         let linhas = conteudo.components(separatedBy: "\n")
 
         for (index, linha) in linhas.enumerated() {
-            if index == 0 { continue }
-            let col = linha.components(separatedBy: ",")
+            if index == 0 { continue } // Pula cabeçalho
+            guard !linha.isEmpty else { continue }
+
+            let col = parseCSVLine(linha)
             guard col.count >= 11 else { continue }
 
             let art = Artropode(

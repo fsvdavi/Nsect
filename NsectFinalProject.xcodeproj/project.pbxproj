@@ -10,6 +10,7 @@
 		2234E4F42E26E1F40062D6A9 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F32E26E1F40062D6A9 /* Shimmer */; };
 		2234E4F72E26E2400062D6A9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F62E26E2400062D6A9 /* SDWebImageSwiftUI */; };
 		22FEA7EF2E2ABB66000B9907 /* Catálogo.csv in Resources */ = {isa = PBXBuildFile; fileRef = 22FEA7EE2E2ABB66000B9907 /* Catálogo.csv */; };
+		22FEA7FA2E2AD5F1000B9907 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 22FEA7F92E2AD5F1000B9907 /* SwiftCSV */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22FEA7FA2E2AD5F1000B9907 /* SwiftCSV in Frameworks */,
 				2234E4F72E26E2400062D6A9 /* SDWebImageSwiftUI in Frameworks */,
 				2234E4F42E26E1F40062D6A9 /* Shimmer in Frameworks */,
 			);
@@ -77,6 +79,7 @@
 			packageProductDependencies = (
 				2234E4F32E26E1F40062D6A9 /* Shimmer */,
 				2234E4F62E26E2400062D6A9 /* SDWebImageSwiftUI */,
+				22FEA7F92E2AD5F1000B9907 /* SwiftCSV */,
 			);
 			productName = NsectFinalProject;
 			productReference = 229F9CE92E18673600619C20 /* NsectFinalProject.app */;
@@ -109,6 +112,7 @@
 			packageReferences = (
 				2234E4F22E26E1F40062D6A9 /* XCRemoteSwiftPackageReference "SwiftUI-Shimmer" */,
 				2234E4F52E26E2400062D6A9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				22FEA7F82E2AD5F1000B9907 /* XCRemoteSwiftPackageReference "SwiftCSV" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 229F9CEA2E18673600619C20 /* Products */;
@@ -361,6 +365,14 @@
 				minimumVersion = 3.1.3;
 			};
 		};
+		22FEA7F82E2AD5F1000B9907 /* XCRemoteSwiftPackageReference "SwiftCSV" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftcsv/SwiftCSV";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -373,6 +385,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2234E4F52E26E2400062D6A9 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		22FEA7F92E2AD5F1000B9907 /* SwiftCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22FEA7F82E2AD5F1000B9907 /* XCRemoteSwiftPackageReference "SwiftCSV" */;
+			productName = SwiftCSV;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

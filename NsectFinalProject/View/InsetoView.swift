@@ -4,51 +4,33 @@ import RealityKit
 
 struct InsetoDetailView: View {
     let artropode: Artropode
+    let topBarHeight: CGFloat = 160
 
     var body: some View {
         ZStack(alignment: .top) {
             Color(.systemGray6).ignoresSafeArea()
 
             // Header
-            VStack(spacing: 0) {
-                ZStack {
-                    // Fundo verde com cantos arredondados inferior
-                    RoundedCorner(radius: 30, corners: [.bottomLeft, .bottomRight])
-                        .fill(Color.green)
-                        .frame(height: 180)
+            ZStack {
+                Rectangle()
+                    .fill(Color(red: 0, green: 0.3, blue: 0))
+                    .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
 
-                    // Logo
-                    Text("Nsect")
-                        .font(.system(size: 40, weight: .bold))
-                        .foregroundColor(.white)
-                        .shadow(radius: 5)
-                }
-                .overlay(
-                    HStack {
-                        Button(action: {}) {
-                            Image(systemName: "chevron.left")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                        }
-                        Spacer()
-                        Button(action: {}) {
-                            Image(systemName: "slider.horizontal.3")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 50)
-                )
-
-                Spacer()
+                Image("nsectTitle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 90)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 40)  // afasta a imagem do topo, fazendo "descer"
             }
+            .frame(height: topBarHeight)
+            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
 
             // Conteúdo
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
-                        Text(String(format: "#%02d", 5))
+                        Text(String(format: "#%02d", artropode.id))
                             .font(.title2).fontWeight(.bold)
                             .foregroundColor(Color.green)
                         Spacer()
@@ -181,8 +163,10 @@ struct RoundedCorner: Shape {
 // Preview com carregarArtrópodes
 struct InsetoDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        if let first = carregarArtrópodes().first {
-            InsetoDetailView(artropode: first)
+        let artrópodes = carregarArtropodes()
+        
+        if artrópodes.indices.contains(0) {
+            InsetoDetailView(artropode: artrópodes[0])
         } else {
             Text("Nenhum inseto disponível")
         }
