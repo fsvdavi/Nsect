@@ -49,9 +49,8 @@ struct MoldInsectView: View {
                             Spacer()
                         }
                     }
-                    .offset(y: -10) // sobe o retângulo cinza para sobrepor parte do verde
-            }
-            .frame(height: 120 + 25) // ajustar altura do ZStack para o offset funcionar
+                    .offset(y: -10)             }
+            .frame(height: 120 + 25)
         }
         .frame(width: 180, height: 200)
     }

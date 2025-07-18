@@ -71,7 +71,8 @@ struct InsetoDetailView: View {
 
                         // Usando SceneView para exibir .usdz
                         SceneView(
-                            scene: SCNScene(named: "ant.scn".components(separatedBy: "/").last!),
+                            scene: SCNScene(named: artropode.modelo3d
+                                .components(separatedBy: "/").last!),
                             options: [.autoenablesDefaultLighting, .allowsCameraControl]
                         )
                         .aspectRatio(contentMode: .fit)
