@@ -21,12 +21,14 @@ struct InsetoDetailView: View {
                     .scaledToFit()
                     .frame(height: 90)
                     .padding(.horizontal, 16)
-                    .padding(.top, 40)  // afasta a imagem do topo, fazendo "descer"
+                    .padding(.top, 40)
             }
             .frame(height: topBarHeight)
             .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+            .ignoresSafeArea(edges: .top)
+            .padding(.bottom, 10)
 
-            // Conteúdo
+
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
@@ -172,20 +174,6 @@ struct InsetoDetailView: View {
     }
 }
 
-// Shape de cantos seletivos
-struct RoundedCorner: Shape {
-    var radius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
-}
 
 // Preview com carregarArtrópodes
 struct InsetoDetailView_Previews: PreviewProvider {
