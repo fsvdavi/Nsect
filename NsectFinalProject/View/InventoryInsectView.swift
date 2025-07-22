@@ -9,6 +9,7 @@ struct InventoryInsectView: View {
 
     var body: some View {
         NavigationStack {
+            
             ZStack(alignment: .top) {
                 // Background color or image
                 Color(white: 0.95).ignoresSafeArea()
