@@ -3,52 +3,50 @@ import SwiftUI
 struct InventoryInsectView: View {
     var artropodes: [Artropode]
 
-    // Two columns grid layout
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
+    // Grid layout
+    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    let topBarHeight: CGFloat = 160
 
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(artropodes, id: \.id) { insect in
-                    MoldInsectView(insect: insect)
+        NavigationStack {
+            ZStack(alignment: .top) {
+                // Background color or image
+                Color(white: 0.95).ignoresSafeArea()
+
+                // Top Title Bar
+                ZStack {
+                    Rectangle()
+                        .fill(Color(red: 0, green: 0.3, blue: 0))
+                        .frame(height: topBarHeight)
+                        .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
+
+                    Image("nsectTitle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 90)
+                        .padding(.top, 40)
+                }
+                .ignoresSafeArea(edges: .top)
+
+                // Grid of insects
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(artropodes, id: \.id) { insect in
+                            MoldInsectView(insect: insect)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.top, topBarHeight + 10)
                 }
             }
-            .padding(.horizontal, 8)
         }
     }
 }
-#Preview {
-    let insetos: [Artropode] = [
-        Artropode(
-            classe: "Insecta",
-            nomeCientifico: "Formica fusca",
-            nomePopular: "Formiga Negra",
-            habitat: "Solo e folhas",
-            descricao: "Uma formiga comum encontrada em diversos habitats.",
-            curiosidade: "É capaz de levantar várias vezes seu próprio peso.",
-            tamanho: "0.5 cm",
-            peso: "0.003 g",
-            imagemURL: "",
-            modelo3d: "ant",
-            id: "01"
-        ),
-        Artropode(
-            classe: "Insecta",
-            nomeCientifico: "Coccinella septempunctata",
-            nomePopular: "Joaninha",
-            habitat: "Jardins e plantações",
-            descricao: "Inseto colorido com capacidade de voo.",
-            curiosidade: "Seus pontos pretos servem como defesa visual.",
-            tamanho: "0.7 cm",
-            peso: "0.005 g",
-            imagemURL: "",
-            modelo3d: "mantis",
-            id: "02"
-        )
-    ]
 
-    return InventoryInsectView(artropodes: insetos)
+#Preview {
+    let sample = [
+        Artropode(classe: "Insecta", nomeCientifico: "Formica fusca", nomePopular: "Formiga Negra", habitat: "Solo e folhas", descricao: "Uma formiga comum.", curiosidade: "Levanta várias vezes seu peso.", tamanho: "0.5 cm", peso: "0.003 g", imagemURL: "", modelo3d: "RedAnt", id: "01"),
+        Artropode(classe: "Insecta", nomeCientifico: "Coccinella septempunctata", nomePopular: "Joaninha", habitat: "Jardins", descricao: "Inseto colorido.", curiosidade: "Pontos servem de defesa.", tamanho: "0.7 cm", peso: "0.005 g", imagemURL: "", modelo3d: "mantis", id: "02")
+    ]
+    InventoryInsectView(artropodes: sample)
 }
