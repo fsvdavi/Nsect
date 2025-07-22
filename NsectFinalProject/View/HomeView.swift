@@ -90,11 +90,13 @@ struct HomeView: View {
         .padding(.vertical, 1)
         .padding(.horizontal, 16)
         .background(
-            Color.white
-                .clipShape(RoundedRectangle(cornerRadius: 25))
+            RoundedRectangle(cornerRadius: 25)
+                .fill(Color.white)
+                .opacity(0.75)
                 .shadow(radius: 3)
         )
     }
+
 }
 
 #Preview {
