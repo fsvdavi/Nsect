@@ -1,5 +1,6 @@
 import SwiftUI
 import RealityKit
+import SceneKit
 
 struct MoldInsectView: View {
     var id: Int
@@ -10,16 +11,14 @@ struct MoldInsectView: View {
     var body: some View {
         VStack(spacing: 16) {
             // Ícone do inseto circular no topo
-            Model3D(named: "\(artropode.modelo3d).usdz") { model in
-                           model
-                               .resizable()
-                               .aspectRatio(contentMode: .fit)
-                               .frame(height: 200)
-                               .shadow(radius: 6)
-                       } placeholder: {
-                           ProgressView()
-                               .frame(height: 200)
-                       }
+            SceneView(
+                scene: SCNScene(named: "\(artropode.modelo3d).scn"
+                    .components(separatedBy: "/").last!),
+                options: [.autoenablesDefaultLighting, .allowsCameraControl]
+            )
+            .aspectRatio(contentMode: .fit)
+            .frame(height: 180)
+        }
 
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
@@ -41,11 +40,23 @@ struct MoldInsectView: View {
                         }
                     }
                     .offset(y: -10)             }
-            .frame(height: 120 + 25)
         }
-    }
 
 
 #Preview {
-    MoldInsectView(id: 1, nome: "Besouro", cor: .green)
+    let inseto = Artropode(
+        classe: "Insecta",
+        nomeCientifico: "Dynastes hercules",
+        nomePopular: "Besouro-Hércules",
+        habitat: "Florestas tropicais",
+        descricao: "Um dos maiores besouros do mundo, com chifres impressionantes.",
+        curiosidade: "Pode levantar até 850 vezes o seu próprio peso.",
+        tamanho: "17 cm",
+        peso: "100 g",
+        imagemURL: "",
+        modelo3d: "besouro_hercules",
+        id: "01"
+    )
+    MoldInsectView(id: 1, nome: "Besouro-Hércules", cor: .green, artropode: inseto)
 }
+
