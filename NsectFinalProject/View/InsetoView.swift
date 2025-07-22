@@ -53,7 +53,7 @@ struct InsetoDetailView: View {
 
                         // Usando SceneView para exibir .usdz
                         SceneView(
-                            scene: SCNScene(named: artropode.modelo3d
+                            scene: SCNScene(named: "\(artropode.modelo3d).scn"
                                 .components(separatedBy: "/").last!),
                             options: [.autoenablesDefaultLighting, .allowsCameraControl]
                         )
@@ -192,8 +192,8 @@ struct InsetoDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let artrópodes = carregarArtropodes()
         
-        if artrópodes.indices.contains(2) {
-            InsetoDetailView(artropode: artrópodes[2])
+        if artrópodes.indices.contains(3) {
+            InsetoDetailView(artropode: artrópodes[3])
         } else {
             Text("Nenhum inseto disponível")
         }

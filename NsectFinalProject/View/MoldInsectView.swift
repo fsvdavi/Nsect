@@ -1,34 +1,25 @@
 import SwiftUI
+import RealityKit
 
 struct MoldInsectView: View {
     var id: Int
     var nome: String
     var cor: Color
+    let artropode: Artropode
 
     var body: some View {
         VStack(spacing: 16) {
             // Ícone do inseto circular no topo
-            Image("antimage")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 300, height: 150)
-                .offset(y: 100)
-                .zIndex(1)
-            ZStack(alignment: .bottom) {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.green, Color(red: 0, green: 0.4, blue: 0)]),
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .frame(width: 180, height: 120)
-                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 4)
-
-
-                    .frame(width: 180, height: 120)
-                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 4)
+            Model3D(named: "\(artropode.modelo3d).usdz") { model in
+                           model
+                               .resizable()
+                               .aspectRatio(contentMode: .fit)
+                               .frame(height: 200)
+                               .shadow(radius: 6)
+                       } placeholder: {
+                           ProgressView()
+                               .frame(height: 200)
+                       }
 
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
@@ -52,9 +43,8 @@ struct MoldInsectView: View {
                     .offset(y: -10)             }
             .frame(height: 120 + 25)
         }
-        .frame(width: 180, height: 200)
     }
-}
+
 
 #Preview {
     MoldInsectView(id: 1, nome: "Besouro", cor: .green)
