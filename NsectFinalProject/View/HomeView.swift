@@ -18,9 +18,11 @@ struct HomeView: View {
                 VStack(spacing: 0) {
                     // Barra superior verde com cantos arredondados só embaixo
                     ZStack {
-                        Rectangle()
-                            .fill(Color(red: 0, green: 0.3, blue: 0))
-                            .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
+                        Color(red: 0, green: 0.3, blue: 0)
+                            .mask(
+                                RoundedRectangle(cornerRadius: 50, style: .continuous)
+                                    .padding(.top, -20)
+                            )
 
                         Image("nsectTitle")
                             .resizable()
@@ -31,8 +33,10 @@ struct HomeView: View {
                     }
                     .frame(height: topBarHeight)
                     .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-                    .ignoresSafeArea(edges: .top) // essencial para não cortar os cantos arredondados
+                    .ignoresSafeArea(edges: .top)
                     .padding(.bottom, 10)
+
+
 
                     Spacer()
 
