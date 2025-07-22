@@ -1,62 +1,83 @@
 import SwiftUI
-import RealityKit
 import SceneKit
 
+
 struct MoldInsectView: View {
-    var id: Int
-    var nome: String
-    var cor: Color
-    let artropode: Artropode
+    var insect: Artropode
 
     var body: some View {
-        VStack(spacing: 16) {
-            // Ícone do inseto circular no topo
-            SceneView(
-                scene: SCNScene(named: "\(artropode.modelo3d).scn"
-                    .components(separatedBy: "/").last!),
-                options: [.autoenablesDefaultLighting, .allowsCameraControl]
-            )
-            .aspectRatio(contentMode: .fit)
-            .frame(height: 180)
+        VStack(spacing: 0) {
+            // 3D model view at the top
+            ZStack {
+                RoundedRectangle(cornerRadius: 50)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.green.opacity(0.6), Color.green]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(height: 220)
+                
+                CustomSceneView(named: insect.modelo3d)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 300)
+            }
+            .frame(height: 130)
+            .padding(.top, 20)
+
+            // Dark gray bottom bar with ID and name
+            HStack {
+                Text("\(insect.id): \(insect.nomePopular)")
+                    .foregroundColor(.white)
+                    .font(.system(size: 16, weight: .bold))
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+            .frame(height: 50)
+            .background(Color(white: 0.4))
         }
-
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
-                    .frame(width: 160, height: 35)
-                    .shadow(color: .black.opacity(0.1), radius: 3, x: 0, y: 2)
-                    .overlay {
-                        HStack(spacing: 20) {
-                            Text("#\(String(format: "%02d", id))")
-                                .font(.system(size: 14, weight: .bold))
-                                .font(.caption)
-                                .foregroundColor(.white)
-                                .padding(.leading, 12)
-
-                            Text(nome)
-                                .font(.headline)
-                                .foregroundColor(.white)
-
-                            Spacer()
-                        }
-                    }
-                    .offset(y: -10)             }
+        .background(
+            LinearGradient(gradient: Gradient(colors: [
+                Color(red: 110/255, green: 194/255, blue: 99/255),
+                Color(red: 101/255, green: 177/255, blue: 91/255)
+            ]), startPoint: .top, endPoint: .bottom)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
+    }
+    struct CustomSceneView: UIViewRepresentable {
+        let named: String
+        
+        func makeUIView(context: Context) -> SCNView {
+            let scnView = SCNView()
+            if let scene = SCNScene(named: named + ".scn") {
+                scene.background.contents = UIColor.clear
+                scnView.scene = scene
+            }
+            scnView.allowsCameraControl = false
+            scnView.autoenablesDefaultLighting = true
+            scnView.backgroundColor = .clear
+            return scnView
         }
-
-
-#Preview {
-    let inseto = Artropode(
-        classe: "Insecta",
-        nomeCientifico: "Dynastes hercules",
-        nomePopular: "Besouro-Hércules",
-        habitat: "Florestas tropicais",
-        descricao: "Um dos maiores besouros do mundo, com chifres impressionantes.",
-        curiosidade: "Pode levantar até 850 vezes o seu próprio peso.",
-        tamanho: "17 cm",
-        peso: "100 g",
-        imagemURL: "",
-        modelo3d: "besouro_hercules",
-        id: "01"
-    )
-    MoldInsectView(id: 1, nome: "Besouro-Hércules", cor: .green, artropode: inseto)
+        
+        func updateUIView(_ uiView: SCNView, context: Context) {}
+    }
 }
 
+#Preview {
+    let insetoExemplo = Artropode(
+        classe: "Insecta",
+        nomeCientifico: "Formica fusca",
+        nomePopular: "Formiga Negra",
+        habitat: "Solo e folhas",
+        descricao: "Uma formiga comum encontrada em diversos habitats.",
+        curiosidade: "É capaz de levantar várias vezes seu próprio peso.",
+        tamanho: "0.5 cm",
+        peso: "0.003 g",
+        imagemURL: "",
+        modelo3d: "ant", // ou ant.scn, dependendo do seu asset
+        id: "01"
+    )
+
+    return MoldInsectView(insect: insetoExemplo)
+}

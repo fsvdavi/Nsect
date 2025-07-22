@@ -78,7 +78,7 @@ struct HomeView: View {
             .frame(maxWidth: .infinity)
             .offset(y: -20)
 
-            NavigationLink(destination: InventoryInsectView()) {
+//            NavigationLink(destination: InventoryInsectView()) {
                 VStack(spacing: 2) {
                     Image(systemName: "person.crop.circle")
                         .font(.system(size: 32))
@@ -87,15 +87,15 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .padding(.vertical, 1)
-        .padding(.horizontal, 16)
-        .background(
-            Color.white
-                .clipShape(RoundedRectangle(cornerRadius: 25))
-                .shadow(radius: 3)
-        )
+//        .padding(.vertical, 1)
+//        .padding(.horizontal, 16)
+//        .background(
+//            Color.white
+//                .clipShape(RoundedRectangle(cornerRadius: 25))
+//                .shadow(radius: 3)
+//        )
     }
-}
+//}
 
 #Preview {
     HomeView()
