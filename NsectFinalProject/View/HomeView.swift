@@ -20,7 +20,7 @@ struct HomeView: View {
                     ZStack {
                         Rectangle()
                             .fill(Color(red: 0, green: 0.3, blue: 0))
-                            .clipShape(RoundedCorners(radius: 40, corners: [.bottomLeft, .bottomRight]))
+                            .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
 
                         Image("nsectTitle")
                             .resizable()

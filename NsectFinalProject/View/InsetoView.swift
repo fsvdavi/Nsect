@@ -9,7 +9,7 @@ struct InsetoDetailView: View {
     var body: some View {
         ZStack(alignment: .top) {
             Color(.systemGray6).ignoresSafeArea()
-
+            
             // Header
             ZStack {
                 Rectangle()
