@@ -14,7 +14,7 @@ struct InventoryInsectView: View {
                     ScrollView {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                             ForEach(1..<10) { index in
-                                MoldInsectView(id: index, nome: "Inseto \(index)", cor: .blue)
+//                                MoldInsectView(id: index, nome: "Inseto \(index)", cor: .blue)
                             }
                         }
                         .padding(.top, topBarHeight + 10)
