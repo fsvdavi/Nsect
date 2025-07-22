@@ -11,7 +11,7 @@ import SwiftUI
 struct NsectFinalProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            MainView()
         }
     }
 }

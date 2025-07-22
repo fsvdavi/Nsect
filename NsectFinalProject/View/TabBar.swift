@@ -8,17 +8,25 @@
 import SwiftUI
 
 struct TabBar: View {
+    @Binding var selectedTab: Tab
+
     var body: some View {
         HStack(spacing: 0) {
-            VStack(spacing: 2) {
-                Image(systemName: "house.fill")
-                    .font(.system(size: 28))
+            Button {
+                selectedTab = .home
+            } label: {
+                VStack {
+                    Image(systemName: "house.fill")
+                        .font(.system(size: 28))
+                }
+                .frame(maxWidth: .infinity)
+                .foregroundColor(selectedTab == .home ? .green : .gray)
             }
-            .frame(maxWidth: .infinity)
-            .foregroundColor(.gray)
 
-            NavigationLink(destination: CameraARView()) {
-                VStack(spacing: 2) {
+            Button {
+                selectedTab = .camera
+            } label: {
+                VStack {
                     ZStack {
                         Circle()
                             .fill(Color(red: 0.0, green: 0.4, blue: 0.2))
@@ -33,26 +41,28 @@ struct TabBar: View {
             .frame(maxWidth: .infinity)
             .offset(y: -20)
 
-            NavigationLink(destination: InventoryInsectView()) {
-                VStack(spacing: 2) {
+            Button {
+                selectedTab = .inventory
+            } label: {
+                VStack {
                     Image(systemName: "person.crop.circle")
                         .font(.system(size: 32))
                 }
-                .foregroundColor(.gray)
+                .frame(maxWidth: .infinity)
+                .foregroundColor(selectedTab == .inventory ? .green : .gray)
             }
-            .frame(maxWidth: .infinity)
         }
         .padding(.vertical, 1)
         .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 25)
                 .fill(Color.white)
-                .opacity(0.75)
+                .opacity(0.85)
                 .shadow(radius: 3)
         )
     }
 }
 
 #Preview {
-    TabBar()
+    TabBar(selectedTab: .constant(.home))
 }
