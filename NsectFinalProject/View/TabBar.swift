@@ -57,8 +57,8 @@ struct TabBar: View {
                 .foregroundColor(selectedTab == .inventory ? .green : .gray)
             }
         }
-        .padding(.vertical, 1)
-        .padding(.horizontal, 16)
+//        .padding(.vertical, 1)
+//        .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 25)
                 .fill(Color.white)
