@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @Binding var selectedTab: AppTab
     let topBarHeight: CGFloat = 160
 
     var body: some View {
@@ -8,7 +9,6 @@ struct HomeView: View {
             // Fundo
             Image("forestBackground")
                 .resizable()
-                .scaledToFill()
                 .opacity(0.8)
                 .ignoresSafeArea()
 
@@ -36,11 +36,16 @@ struct HomeView: View {
                 Spacer()
 
                 // Conteúdo principal
-                Image("brazilMap")
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(1.35)
-                    .shadow(radius: 20)
+                Button {
+                    selectedTab = .profile
+                } label: {
+                    Image("brazilMap")
+                        .resizable()
+                        .scaledToFit()
+                        .scaleEffect(1.35)
+                        .shadow(radius: 20)
+                }
+                .buttonStyle(.plain)
 
                 Spacer()
             }
@@ -49,5 +54,13 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    struct HomeViewPreviewWrapper: View {
+        @State private var selectedTab: AppTab = .home
+
+        var body: some View {
+            HomeView(selectedTab: $selectedTab)
+        }
+    }
+
+    return HomeViewPreviewWrapper()
 }

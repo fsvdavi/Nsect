@@ -73,7 +73,7 @@ struct ProfileView: View {
 }
 
 private struct ProfilePreviewWrapper: View {
-    @State private var selectedTab: AppTab = .inventory
+    @State private var selectedTab: AppTab = .profile
     @State private var showCamera: Bool = false
 
     var body: some View {

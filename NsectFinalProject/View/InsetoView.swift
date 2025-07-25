@@ -6,9 +6,10 @@ struct InsetoDetailView: View {
     let topBarHeight: CGFloat = 160
     
     var body: some View {
-        NavigationStack {
+
             ZStack(alignment: .top) {
-                // Fundo da tela
+                
+                // Fundo
                 Image("forestBackground")
                     .resizable()
                     .scaledToFill()
@@ -18,6 +19,7 @@ struct InsetoDetailView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
+                    
                     // TopBar com canto arredondado e "Nsect"
                     ZStack {
                         Rectangle()
@@ -37,8 +39,7 @@ struct InsetoDetailView: View {
                     .ignoresSafeArea(edges: .top)
                     .padding(.bottom, 10)
                     
-                    // Agora continua com ScrollView normalmente
-                    
+                    // ScrollView
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 1) {
                             HStack(alignment: .firstTextBaseline, spacing: 140) {  // diminui o spacing do HStack
@@ -59,7 +60,7 @@ struct InsetoDetailView: View {
                             .padding(.bottom, -60)
 
 
-                            // Card com modelo 3D sem fundo branco
+                            // Card com modelo 3D
                             ZStack {
                                 RoundedRectangle(cornerRadius: 50)
                                     .fill(
@@ -136,49 +137,15 @@ struct InsetoDetailView: View {
                         .padding(.top, 20)
                     }
                     
-                    tabBar
+                    
                 }
                 .ignoresSafeArea(edges: .bottom)
             }
         }
     }
     
-    var tabBar: some View {
-        HStack(spacing: 0) {
-            NavigationLink(destination: HomeView()) {
-                VStack(spacing: 2) {
-                    Image(systemName: "house.fill")
-                        .font(.system(size: 28))
-                }
-                .foregroundColor(.gray)
-            }
-            .frame(maxWidth: .infinity)
             
-            NavigationLink(destination: CameraARView()) {
-                VStack(spacing: 2) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 0.0, green: 0.4, blue: 0.2))
-                            .frame(width: 70, height: 70)
-                        
-                        Image(systemName: "camera")
-                            .foregroundColor(.white)
-                            .font(.system(size: 34))
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .offset(y: -20)
-            
-//            NavigationLink(destination: InventoryInsectView()) {
-                VStack(spacing: 2) {
-                    Image(systemName: "person.crop.circle")
-                        .font(.system(size: 32))
-                }
-                .foregroundColor(.gray)
-            }
-            .frame(maxWidth: .infinity)
-        }
+
 //        .padding(.vertical, 1)
 //        .padding(.horizontal, 16)
 //        .background(
@@ -186,7 +153,7 @@ struct InsetoDetailView: View {
 //                .clipShape(RoundedRectangle(cornerRadius: 25))
 //                .shadow(radius: 3)
 //        )
-    }
+    
     
     @ViewBuilder
     func infoColumn(title: String, value: String) -> some View {
@@ -228,4 +195,3 @@ struct InsetoDetailView: View {
             }
         }
     }
-//}
