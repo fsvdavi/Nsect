@@ -221,8 +221,8 @@ struct InsetoDetailView: View {
         static var previews: some View {
             let artrópodes = carregarArtropodes()
             
-            if artrópodes.indices.contains(4) {
-                InsetoDetailView(artropode: artrópodes[4])
+            if artrópodes.indices.contains(2) {
+                InsetoDetailView(artropode: artrópodes[2])
             } else {
                 Text("Nenhum inseto disponível")
             }
