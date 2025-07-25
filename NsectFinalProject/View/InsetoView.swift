@@ -22,7 +22,6 @@ struct InsetoDetailView: View {
                 // Fundo da tela
                 Image("forestBackground")
                     .resizable()
-                    .scaledToFill()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()
                     .opacity(0.8)
@@ -204,8 +203,8 @@ struct InsetoDetailView: View {
         static var previews: some View {
             let artrópodes = carregarArtropodes()
             
-            if artrópodes.indices.contains(7) {
-                InsetoDetailView(artropode: artrópodes[7])
+            if artrópodes.indices.contains(3) {
+                InsetoDetailView(artropode: artrópodes[3])
             } else {
                 Text("Nenhum inseto disponível")
             }
