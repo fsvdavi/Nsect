@@ -8,7 +8,6 @@ struct HomeView: View {
             // Fundo
             Image("forestBackground")
                 .resizable()
-                .scaledToFill()
                 .opacity(0.8)
                 .ignoresSafeArea()
 

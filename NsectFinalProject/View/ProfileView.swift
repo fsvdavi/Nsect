@@ -4,13 +4,24 @@ struct ProfileView: View {
     let topBarHeight: CGFloat = 360
     @Binding var selectedTab: AppTab
     @Binding var showCamera: Bool
+    struct RoundedCorners: Shape {
+        var radius: CGFloat = 25.0
+        var corners: UIRectCorner = [.bottomLeft, .bottomRight]
 
+        func path(in rect: CGRect) -> Path {
+            let path = UIBezierPath(
+                roundedRect: rect,
+                byRoundingCorners: corners,
+                cornerRadii: CGSize(width: radius, height: radius)
+            )
+            return Path(path.cgPath)
+        }
+    }
     var body: some View {
         ZStack(alignment: .top) {
             // Fundo da tela
             Image("forestBackground")
                 .resizable()
-                .scaledToFill()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipped()
                 .opacity(0.8)

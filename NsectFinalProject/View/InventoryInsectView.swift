@@ -1,53 +1,61 @@
 import SwiftUI
 
-struct InventoryInsectView: View {
-    var artropodes: [Artropode]
+struct RoundedCorners: Shape {
+    var radius: CGFloat = 25.0
+    var corners: UIRectCorner = [.bottomLeft, .bottomRight]
 
-    // Grid layout
-    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}
+
+struct InventoryInsectView: View {
     let topBarHeight: CGFloat = 160
+    let insetos: [Artropode] = carregarArtropodes()
 
     var body: some View {
-        NavigationStack {
+        ZStack(alignment: .top) {
             
-            ZStack(alignment: .top) {
-                // Background color or image
-                Color(white: 0.95).ignoresSafeArea()
-
-                // Top Title Bar
-                ZStack {
-                    Rectangle()
-                        .fill(Color(red: 0, green: 0.3, blue: 0))
-                        .frame(height: topBarHeight)
-                        .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
-
-                    Image("nsectTitle")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 90)
-                        .padding(.top, 40)
-                }
-                .ignoresSafeArea(edges: .top)
-
-                // Grid of insects
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(artropodes, id: \.id) { insect in
-                            MoldInsectView(insect: insect)
-                        }
+            // Fundo com imagem
+            Image("forestBackground")
+                .resizable()
+                .opacity(0.8)
+                .ignoresSafeArea()
+            
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(insetos) { inseto in
+                        MoldInsectView(insect: inseto)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.top, topBarHeight + 10)
                 }
+                .padding()
+                .padding(.top, 100)
             }
+
+            ZStack {
+                Rectangle()
+                    .fill(Color(red: 0, green: 0.3, blue: 0))
+                    .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
+
+                Image("nsectTitle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 90)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 40)
+            }
+            .frame(height: topBarHeight)
+            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         }
+        .edgesIgnoringSafeArea(.top)
     }
 }
 
 #Preview {
-    let sample = [
-        Artropode(classe: "Insecta", nomeCientifico: "Formica fusca", nomePopular: "Formiga Negra", habitat: "Solo e folhas", descricao: "Uma formiga comum.", curiosidade: "Levanta várias vezes seu peso.", tamanho: "0.5 cm", peso: "0.003 g", imagemURL: "", modelo3d: "RedAnt", id: "01"),
-        Artropode(classe: "Insecta", nomeCientifico: "Coccinella septempunctata", nomePopular: "Joaninha", habitat: "Jardins", descricao: "Inseto colorido.", curiosidade: "Pontos servem de defesa.", tamanho: "0.7 cm", peso: "0.005 g", imagemURL: "", modelo3d: "mantis", id: "02")
-    ]
-    InventoryInsectView(artropodes: sample)
+    InventoryInsectView()
 }
