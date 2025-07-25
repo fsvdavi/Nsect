@@ -10,7 +10,6 @@ import ARKit
 import SwiftUI
 
 class ARCoordinator: NSObject, ObservableObject {
-    let insetosDisponiveis = ["ant", "Ladybug", "mantis", "RedAnt", "Scorpion"]
     let insetoEscalas: [String: SIMD3<Float>] = [
         "ant": SIMD3<Float>(0.02, 0.02, 0.02),
         "Ladybug": SIMD3<Float>(0.09, 0.09, 0.09),
@@ -21,6 +20,10 @@ class ARCoordinator: NSObject, ObservableObject {
 
     var boxEntity: ModelEntity?
     var arView: ARView?
+    
+    @Published var artropodesDisponiveis: [Artropode] = carregarArtropodes()
+    @Published var insetosCapturados: [Artropode] = []
+    var artropodeAtual: Artropode?
     
     @Published var showConfetti = false
     @Published var canCapture = false
@@ -45,7 +48,7 @@ class ARCoordinator: NSObject, ObservableObject {
             self.verificarSePodeCapturar()
         }
 
-        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             self.carregarInsetoAleatorio(anchor: anchor)
         }
 
@@ -85,36 +88,43 @@ class ARCoordinator: NSObject, ObservableObject {
     func carregarInsetoAleatorio(anchor: AnchorEntity) {
         guard boxEntity == nil else { return }
 
-        let insetoEscolhido = insetosDisponiveis.randomElement() ?? "ant"
+        let artropodesComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }
+        guard let artropode = artropodesComModelo.randomElement() else {
+            print("❌ Nenhum artropode com modelo3d válido.")
+            return
+        }
+        artropodeAtual = artropode
 
         do {
-            let insectEntity = try ModelEntity.loadModel(named: insetoEscolhido)
-            insectEntity.scale = insetoEscalas[insetoEscolhido] ?? SIMD3<Float>(0.05, 0.05, 0.05)
-            if insetoEscolhido == "mantis" {
-                insectEntity.transform.rotation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+            let entity = try ModelEntity.loadModel(named: artropode.modelo3d)
+            entity.scale = insetoEscalas[artropode.modelo3d] ?? SIMD3<Float>(0.05, 0.05, 0.05)
+
+            if artropode.modelo3d == "mantis" {
+                entity.transform.rotation = simd_quatf(angle: .pi, axis: [0, 1, 0])
             }
 
-            self.boxEntity = insectEntity
+            self.boxEntity = entity
             let randomX = Float.random(in: -0.2...0.2)
             let randomZ = Float.random(in: -0.2...0.2)
-            insectEntity.position = SIMD3<Float>(randomX, 0, randomZ)
-            anchor.addChild(insectEntity)
+            entity.position = SIMD3<Float>(randomX, 0, randomZ)
+            anchor.addChild(entity)
+
             DispatchQueue.main.async {
                 self.mensagem = "Inseto encontrado!"
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.mensagem = nil
                 }
             }
 
-            print("Inseto carregado: \(insetoEscolhido)")
+            print("Inseto carregado: \(artropode.nomePopular)")
         } catch {
-            print("Erro ao carregar inseto '\(insetoEscolhido)': \(error)")
+            print("❌ Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
         }
     }
     func capturarNsect() {
         guard let arView = arView,
-              let boxEntity = boxEntity else { return }
+              let boxEntity = boxEntity,
+              let artropode = artropodeAtual else { return }
 
         let center = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
         let results = arView.raycast(from: center, allowing: .estimatedPlane, alignment: .horizontal)
@@ -135,16 +145,18 @@ class ARCoordinator: NSObject, ObservableObject {
                     translation: boxEntity.transform.translation
                 )
 
-                boxEntity.move(
-                    to: transform,
-                    relativeTo: boxEntity.parent,
-                    duration: 0.8,
-                    timingFunction: .easeInOut
-                )
+                boxEntity.move(to: transform, relativeTo: boxEntity.parent, duration: 0.8, timingFunction: .easeInOut)
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     self.boxEntity?.removeFromParent()
                     self.boxEntity = nil
+
+                    // ✅ Armazena o artropode capturado
+                    if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
+                        self.insetosCapturados.append(artropode)
+                        print("✅ Capturado: \(artropode.nomePopular)")
+                    }
+
                     self.mensagem = "Inseto capturado!"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.mensagem = nil

@@ -20,15 +20,16 @@ struct MainView: View {
             case .home:
                 HomeView()
             case .inventory:
-//                InventoryInsectView()
-                HomeView()
+                ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
             }
 
             // Tab bar fixa em todas as telas
             VStack {
                 Spacer()
                 TabBar(selectedTab: $selectedTab, showCamera: $showCamera)
+                    .frame(maxWidth: .infinity)
             }
+
         }
         .ignoresSafeArea(edges: .bottom)
         .fullScreenCover(isPresented: $showCamera) {

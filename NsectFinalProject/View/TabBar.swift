@@ -45,7 +45,6 @@ struct TabBar: View {
             }
             .frame(maxWidth: .infinity)
             .offset(y: -20)
-
             // Botão Perfil
             Button {
                 selectedTab = .inventory
