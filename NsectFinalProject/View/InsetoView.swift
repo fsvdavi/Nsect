@@ -4,9 +4,20 @@ import SceneKit
 struct InsetoDetailView: View {
     let artropode: Artropode
     let topBarHeight: CGFloat = 160
-    
+    struct RoundedCorners: Shape {
+        var radius: CGFloat = 25.0
+        var corners: UIRectCorner = [.bottomLeft, .bottomRight]
+
+        func path(in rect: CGRect) -> Path {
+            let path = UIBezierPath(
+                roundedRect: rect,
+                byRoundingCorners: corners,
+                cornerRadii: CGSize(width: radius, height: radius)
+            )
+            return Path(path.cgPath)
+        }
+    }
     var body: some View {
-        NavigationStack {
             ZStack(alignment: .top) {
                 // Fundo da tela
                 Image("forestBackground")
@@ -35,7 +46,7 @@ struct InsetoDetailView: View {
                     .frame(height: topBarHeight)
                     .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                     .ignoresSafeArea(edges: .top)
-                    .padding(.bottom, 10)
+                    .padding(.bottom, -62)
                     
                     // Agora continua com ScrollView normalmente
                     
@@ -136,57 +147,12 @@ struct InsetoDetailView: View {
                         .padding(.top, 20)
                     }
                     
-                    tabBar
                 }
                 .ignoresSafeArea(edges: .bottom)
             }
         }
     }
     
-    var tabBar: some View {
-        HStack(spacing: 0) {
-            NavigationLink(destination: HomeView()) {
-                VStack(spacing: 2) {
-                    Image(systemName: "house.fill")
-                        .font(.system(size: 28))
-                }
-                .foregroundColor(.gray)
-            }
-            .frame(maxWidth: .infinity)
-            
-            NavigationLink(destination: CameraARView()) {
-                VStack(spacing: 2) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(red: 0.0, green: 0.4, blue: 0.2))
-                            .frame(width: 70, height: 70)
-                        
-                        Image(systemName: "camera")
-                            .foregroundColor(.white)
-                            .font(.system(size: 34))
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .offset(y: -20)
-            
-//            NavigationLink(destination: InventoryInsectView()) {
-                VStack(spacing: 2) {
-                    Image(systemName: "person.crop.circle")
-                        .font(.system(size: 32))
-                }
-                .foregroundColor(.gray)
-            }
-            .frame(maxWidth: .infinity)
-        }
-//        .padding(.vertical, 1)
-//        .padding(.horizontal, 16)
-//        .background(
-//            Color.white
-//                .clipShape(RoundedRectangle(cornerRadius: 25))
-//                .shadow(radius: 3)
-//        )
-    }
     
     @ViewBuilder
     func infoColumn(title: String, value: String) -> some View {
@@ -201,11 +167,27 @@ struct InsetoDetailView: View {
     }
     struct CustomSceneView: UIViewRepresentable {
         let named: String
+
+        // Dicionário de escalas
+        let insetoEscalas: [String: SIMD3<Float>] = [
+            "ant": SIMD3<Float>(1.5, 1.5, 1.5),
+            "spider": SIMD3<Float>(1.8, 1.8, 1.8),
+            "RedAnt": SIMD3<Float>(1.8, 1.8, 1.8),
+            "mantis": SIMD3<Float>(1.0, 1.0, 1.0),
+            "besouro": SIMD3<Float>(2.0, 2.0, 2.0),
+            "Scorpion": SIMD3<Float>(1.4, 1.4, 1.4),
+            "Ladybug": SIMD3<Float>(1.4, 1.4, 1.4)
+        ]
         
         func makeUIView(context: Context) -> SCNView {
             let scnView = SCNView()
             if let scene = SCNScene(named: named + ".scn") {
                 scene.background.contents = UIColor.clear
+                
+                // Escala customizada
+                let scale = insetoEscalas[named] ?? SIMD3<Float>(0.05, 0.05, 0.05)
+                scene.rootNode.scale = SCNVector3(scale.x, scale.y, scale.z)
+                
                 scnView.scene = scene
             }
             scnView.allowsCameraControl = true
@@ -216,13 +198,14 @@ struct InsetoDetailView: View {
         
         func updateUIView(_ uiView: SCNView, context: Context) {}
     }
+
     // Preview com carregarArtropodes
     struct InsetoDetailView_Previews: PreviewProvider {
         static var previews: some View {
             let artrópodes = carregarArtropodes()
             
-            if artrópodes.indices.contains(2) {
-                InsetoDetailView(artropode: artrópodes[2])
+            if artrópodes.indices.contains(7) {
+                InsetoDetailView(artropode: artrópodes[7])
             } else {
                 Text("Nenhum inseto disponível")
             }

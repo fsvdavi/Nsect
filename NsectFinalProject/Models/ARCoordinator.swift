@@ -15,7 +15,10 @@ class ARCoordinator: NSObject, ObservableObject {
         "Ladybug": SIMD3<Float>(0.09, 0.09, 0.09),
         "mantis": SIMD3<Float>(0.2, 0.2, 0.2),
         "RedAnt": SIMD3<Float>(0.01, 0.01, 0.01),
-        "Scorpion": SIMD3<Float>(0.006, 0.006, 0.006)
+        "Scorpion": SIMD3<Float>(0.006, 0.006, 0.006),
+        "besouro": SIMD3<Float>(0.006, 0.006, 0.006),
+        "spider": SIMD3<Float>(1, 1, 1)
+
     ]
 
     var boxEntity: ModelEntity?
