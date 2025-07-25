@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum AppTab {
-    case home, inventory
+    case home, profile, inventory
 }
 
 struct TabBar: View {
@@ -45,24 +45,25 @@ struct TabBar: View {
             }
             .frame(maxWidth: .infinity)
             .offset(y: -20)
+            
             // Botão Perfil
             Button {
-                selectedTab = .inventory
+                selectedTab = .profile
             } label: {
                 VStack {
                     Image(systemName: "person.crop.circle")
                         .font(.system(size: 32))
                 }
                 .frame(maxWidth: .infinity)
-                .foregroundColor(selectedTab == .inventory ? .green : .gray)
+                .foregroundColor(selectedTab == .profile ? .green : .gray)
             }
         }
-//        .padding(.vertical, 1)
-//        .padding(.horizontal, 16)
+        .padding(.vertical, 1)
+        .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 25)
                 .fill(Color.white)
-                .opacity(0.85)
+                .opacity(0.75)
                 .shadow(radius: 3)
         )
     }

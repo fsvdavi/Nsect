@@ -18,10 +18,14 @@ struct MainView: View {
             // Conteúdo principal da aba selecionada
             switch selectedTab {
             case .home:
-                HomeView()
+                HomeView(selectedTab: $selectedTab)
+            case .profile:
+                ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
             case .inventory:
                 ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
+//                InventoryInsectView()
             }
+
 
             // Tab bar fixa em todas as telas
             VStack {
