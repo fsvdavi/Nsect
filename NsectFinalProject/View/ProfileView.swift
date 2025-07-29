@@ -19,7 +19,6 @@ struct ProfileView: View {
     }
     var body: some View {
         ZStack(alignment: .top) {
-            // Fundo da tela
             Image("forestBackground")
                 .resizable()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,16 +40,15 @@ struct ProfileView: View {
                         
                         Circle()
                             .fill(Color.white.opacity(0.9))
-                            .frame(width: 130, height: 130)
+                            .frame(width: 150, height: 150)
                             .overlay(
-                                Image(systemName: "person.fill")
+                                Image("hatsunemikuprofile")
                                     .resizable()
                                     .scaledToFit()
-                                    .foregroundColor(.gray)
-                                    .padding(20)
+                                    .clipShape(Circle())
                             )
                         
-                        Text("Nome do Usuário")
+                        Text("Hatsune Miku")
                             .font(.system(size: 18))
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -70,7 +68,6 @@ struct ProfileView: View {
                 
                 Spacer()
                 
-                // Conteúdo futuro aqui
                 
                 Spacer()
                     .ignoresSafeArea(edges: .bottom)
