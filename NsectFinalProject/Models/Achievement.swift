@@ -11,5 +11,5 @@ struct Achievement: Identifiable {
     let id = UUID()
     let title: String
     let description: String
-    let isUnlocked: Bool
+    var isUnlocked: Bool
 }

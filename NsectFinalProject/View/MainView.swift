@@ -1,12 +1,3 @@
-//
-//  MainView.swift
-//  NsectFinalProject
-//
-//  Created by found on 25/07/25.
-//
-
-// Evitar abrir telas repetidas
-
 import SwiftUI
 
 struct MainView: View {
@@ -21,7 +12,7 @@ struct MainView: View {
             case .home:
                 HomeView(selectedTab: $selectedTab)
             case .profile:
-                ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
+                ProfileView(selectedTab: $selectedTab, showCamera: $showCamera, coordinator: arCoordinator)
             case .inventory:
                 InventoryInsectView(arCoordinator: arCoordinator)
             }
@@ -36,12 +27,9 @@ struct MainView: View {
         .fullScreenCover(isPresented: $showCamera) {
             CameraARView(arCoordinator: arCoordinator)
         }
-
     }
 }
-
 
 #Preview {
     MainView()
 }
-

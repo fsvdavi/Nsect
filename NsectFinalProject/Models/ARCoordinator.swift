@@ -23,6 +23,13 @@ class ARCoordinator: NSObject, ObservableObject {
     @Published var showConfetti = false
     @Published var canCapture = false
     @Published var mensagem: String? = nil
+    
+    @Published var conquistas: [Achievement] = [
+        Achievement(title: "Mestre dos Insetos", description: "Capture todos os artrópodes disponíveis", isUnlocked: false),
+        Achievement(title: "Explorador Iniciante", description: "Capture seu primeiro inseto", isUnlocked: false),
+        Achievement(title: "Caçador Noturno", description: "Capture um inseto à noite", isUnlocked: false),
+        Achievement(title: "Entomologista Sênior", description: "Complete o inventário", isUnlocked: false)
+    ]
 
     private var timerCheckCapture: Timer?
     private var timerLoadInseto: Timer?
@@ -165,7 +172,6 @@ class ARCoordinator: NSObject, ObservableObject {
                     self.boxEntity = nil
                     self.artropodeAtual = nil
 
-                    // Armazena o artropode capturado
                     if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
                         if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
                             self.artropodesDisponiveis[index].foiCapturado = true
@@ -175,18 +181,48 @@ class ARCoordinator: NSObject, ObservableObject {
                             novo.foiCapturado = true
                             self.insetosCapturados.append(novo)
                         }
+
+                        self.atualizarConquistas()
                     }
 
                     print("✅ Capturado: \(artropode.nomePopular)")
                 }
 
                 DispatchQueue.main.async {
-                    self.mensagem = "Inseto capturado!"
+                    self.mensagem = "Inseto descoberto!"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.mensagem = nil
                     }
                 }
             }
+        }
+    }
+
+    func atualizarConquistas() {
+        if insetosCapturados.count >= 1 {
+            desbloquearConquista(titulo: "Explorador Iniciante")
+        }
+
+        let totalComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }.count
+        if insetosCapturados.count == totalComModelo {
+            desbloquearConquista(titulo: "Mestre dos Insetos")
+        }
+
+        let todosCapturados = artropodesDisponiveis.filter { $0.foiCapturado }.count
+        if todosCapturados == artropodesDisponiveis.count {
+            desbloquearConquista(titulo: "Entomologista Sênior")
+        }
+
+        let horaAtual = Calendar.current.component(.hour, from: Date())
+        if horaAtual >= 18 || horaAtual <= 6 {
+            desbloquearConquista(titulo: "Caçador Noturno")
+        }
+    }
+
+    func desbloquearConquista(titulo: String) {
+        if let index = conquistas.firstIndex(where: { $0.title == titulo && !$0.isUnlocked }) {
+            conquistas[index].isUnlocked = true
+            print("🏆 Conquista desbloqueada: \(titulo)")
         }
     }
 
