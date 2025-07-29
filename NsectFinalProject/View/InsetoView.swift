@@ -85,7 +85,47 @@ struct InsetoDetailView: View {
                                     .aspectRatio(contentMode: .fit)
                                     .frame(height: 300)
                             }
+                            .padding(.top, 30)
                             .padding(.horizontal)
+                            
+                            ZStack {
+                                // background gradiente
+                                RoundedRectangle(cornerRadius: 50)
+                                    .fill(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.green.opacity(0.6), Color.green]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .frame(height: 220)
+
+                                // imagem preenchendo todo o card
+                                AsyncImage(url: URL(string: artropode.imagemURL)) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                    case .success(let img):
+                                        img
+                                            .resizable()
+                                            .scaledToFill()          // ⬅️ preenche todo o espaço
+                                            .frame(height: 220)      // ⬅️ mesma altura do RoundedRectangle
+                                            .clipped()               // ⬅️ corta o excesso
+                                            .cornerRadius(50)        // ⬅️ mesmo cornerRadius do RoundedRectangle
+                                    case .failure:
+                                        Color.gray                // fallback simples
+                                            .frame(height: 220)
+                                            .cornerRadius(50)
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
+                            }
+                            .padding(.bottom, 30)
+                            .padding(.horizontal)
+
+                            Spacer()
+                          
                             
                             // Informações
                             VStack {
@@ -97,6 +137,7 @@ struct InsetoDetailView: View {
                                 .padding(.horizontal)
                                 .padding(.vertical, 12)
                                 
+                                
                                 HStack {
                                     infoColumn(title: "Classe", value: artropode.classe)
                                     Spacer()
@@ -104,6 +145,7 @@ struct InsetoDetailView: View {
                                 }
                                 .padding(.horizontal)
                                 .padding(.bottom, 16)
+                                
                                 
                                 VStack(alignment: .leading, spacing: 12) {
                                     Group {
@@ -148,11 +190,45 @@ struct InsetoDetailView: View {
                     
                 }
                 .ignoresSafeArea(edges: .bottom)
+
             }
         }
     }
     
-    
+import SwiftUI
+
+struct InsetoImageView: View {
+    let imageURL: String
+
+    var body: some View {
+        AsyncImage(url: URL(string: imageURL)) { phase in
+            switch phase {
+            case .empty:
+                // Enquanto carrega
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            case .success(let image):
+                // Quando carregar, exibe a imagem
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+                    .cornerRadius(12)
+            case .failure:
+                // Se falhar, mostra um ícone genérico
+                Image(systemName: "photo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
+                    .foregroundColor(.gray)
+            @unknown default:
+                EmptyView()
+            }
+        }
+    }
+}
+
+
     @ViewBuilder
     func infoColumn(title: String, value: String) -> some View {
         VStack(alignment: .center, spacing: 4) {
@@ -203,8 +279,8 @@ struct InsetoDetailView: View {
         static var previews: some View {
             let artrópodes = carregarArtropodes()
             
-            if artrópodes.indices.contains(3) {
-                InsetoDetailView(artropode: artrópodes[3])
+            if artrópodes.indices.contains(2) {
+                InsetoDetailView(artropode: artrópodes[2])
             } else {
                 Text("Nenhum inseto disponível")
             }
