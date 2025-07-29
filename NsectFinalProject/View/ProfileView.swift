@@ -4,6 +4,7 @@ struct ProfileView: View {
     let topBarHeight: CGFloat = 360
     @Binding var selectedTab: AppTab
     @Binding var showCamera: Bool
+    
     struct RoundedCorners: Shape {
         var radius: CGFloat = 25.0
         var corners: UIRectCorner = [.bottomLeft, .bottomRight]
@@ -17,6 +18,15 @@ struct ProfileView: View {
             return Path(path.cgPath)
         }
     }
+    
+    let achievements: [Achievement] = [
+        Achievement(title: "Mestre dos Insetos", description: "Capture todos os artrópodes disponíveis", isUnlocked: true),
+        Achievement(title: "Explorador Iniciante", description: "Capture seu primeiro inseto", isUnlocked: true),
+        Achievement(title: "Caçador Noturno", description: "Capture um inseto à noite", isUnlocked: false),
+        Achievement(title: "Entomologista Sênior", description: "Complete o inventário", isUnlocked: false),
+        
+    ]
+    
     var body: some View {
         ZStack(alignment: .top) {
             Image("forestBackground")
@@ -64,13 +74,19 @@ struct ProfileView: View {
                 .frame(height: topBarHeight)
                 .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                 .ignoresSafeArea(edges: .top)
-                .padding(.bottom, 10)
+                .padding(.bottom, -10)
                 
-                Spacer()
-                
-                
-                Spacer()
-                    .ignoresSafeArea(edges: .bottom)
+                // Lista de Conquistas
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(achievements) { achievement in
+                            AchievementView(achievement: achievement)
+                        }
+                    }
+                    .padding(.top, 10)
+                    .padding(.bottom, 0)
+                    
+                }
             }
         }
     }
