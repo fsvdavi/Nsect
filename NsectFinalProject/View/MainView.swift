@@ -22,8 +22,8 @@ struct MainView: View {
             case .profile:
                 ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
             case .inventory:
-                ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
-//                InventoryInsectView()
+//                ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
+                InventoryInsectView()
             }
 
 

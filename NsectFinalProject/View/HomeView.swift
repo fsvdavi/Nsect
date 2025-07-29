@@ -37,7 +37,7 @@ struct HomeView: View {
 
                 // Conteúdo principal
                 Button {
-                    selectedTab = .profile
+                    selectedTab = .inventory
                 } label: {
                     Image("brazilMap")
                         .resizable()
