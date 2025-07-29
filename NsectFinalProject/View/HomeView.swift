@@ -49,14 +49,24 @@ struct HomeView: View {
                 Button {
                     selectedTab = .inventory
                 } label: {
-                    Image("brazilMap")
-                        .resizable()
-                        .scaledToFit()
-                        .scaleEffect(1.35)
-                        .shadow(radius: 20)
-                        .padding(.top, -80)
+                    ZStack {
+                        Image("brazilMap")
+                            .resizable()
+                            .scaledToFit()
+                            .scaleEffect(1.35)
+                            .shadow(radius: 20)
+
+                        Image("backpack")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 150, height: 150)
+                            .opacity(0.2)
+                            .offset(x: 28, y: -30)
+                    }
+                    .padding(.top, -80)
                 }
                 .buttonStyle(.plain)
+
 
                 Spacer()
             }
