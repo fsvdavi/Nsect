@@ -1,10 +1,3 @@
-//
-//  ARCoordinator.swift
-//  NsectFinalProject
-//
-//  Created by found on 11/07/25.
-//
-
 import RealityKit
 import ARKit
 import SwiftUI
@@ -16,24 +9,31 @@ class ARCoordinator: NSObject, ObservableObject {
         "mantis": SIMD3<Float>(0.2, 0.2, 0.2),
         "RedAnt": SIMD3<Float>(0.01, 0.01, 0.01),
         "Scorpion": SIMD3<Float>(0.006, 0.006, 0.006),
-        "besouro": SIMD3<Float>(0.006, 0.006, 0.006),
-        "spider": SIMD3<Float>(1, 1, 1)
-
+        "besouro": SIMD3<Float>(0.002, 0.002, 0.002),
+        "spider": SIMD3<Float>(0.03, 0.03, 0.03)
     ]
 
     var boxEntity: ModelEntity?
     var arView: ARView?
-    
+
     @Published var artropodesDisponiveis: [Artropode] = carregarArtropodes()
     @Published var insetosCapturados: [Artropode] = []
     var artropodeAtual: Artropode?
-    
+
     @Published var showConfetti = false
     @Published var canCapture = false
     @Published var mensagem: String? = nil
 
+    private var timerCheckCapture: Timer?
+    private var timerLoadInseto: Timer?
 
     func configurarCenaAR() -> ARView {
+        print("🔄 Configurando ARView e resetando estado")
+
+        self.boxEntity = nil
+        self.arView = nil
+        self.artropodeAtual = nil
+
         let arView = ARView(frame: .zero)
         self.arView = arView
 
@@ -47,12 +47,18 @@ class ARCoordinator: NSObject, ObservableObject {
 
         carregarInsetoAleatorio(anchor: anchor)
 
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-            self.verificarSePodeCapturar()
+        timerCheckCapture?.invalidate()
+        timerLoadInseto?.invalidate()
+
+        timerCheckCapture = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            self?.verificarSePodeCapturar()
         }
 
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.carregarInsetoAleatorio(anchor: anchor)
+        timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if self.boxEntity == nil {
+                self.carregarInsetoAleatorio(anchor: anchor)
+            }
         }
 
         return arView
@@ -88,8 +94,11 @@ class ARCoordinator: NSObject, ObservableObject {
             }
         }
     }
+
     func carregarInsetoAleatorio(anchor: AnchorEntity) {
-        guard boxEntity == nil else { return }
+        guard boxEntity == nil else {
+            return
+        }
 
         let artropodesComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }
         guard let artropode = artropodesComModelo.randomElement() else {
@@ -124,6 +133,7 @@ class ARCoordinator: NSObject, ObservableObject {
             print("❌ Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
         }
     }
+
     func capturarNsect() {
         guard let arView = arView,
               let boxEntity = boxEntity,
@@ -153,13 +163,24 @@ class ARCoordinator: NSObject, ObservableObject {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     self.boxEntity?.removeFromParent()
                     self.boxEntity = nil
+                    self.artropodeAtual = nil
 
-                    // ✅ Armazena o artropode capturado
+                    // Armazena o artropode capturado
                     if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
-                        self.insetosCapturados.append(artropode)
-                        print("✅ Capturado: \(artropode.nomePopular)")
+                        if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
+                            self.artropodesDisponiveis[index].foiCapturado = true
+                            self.insetosCapturados.append(self.artropodesDisponiveis[index])
+                        } else {
+                            let novo = artropode
+                            novo.foiCapturado = true
+                            self.insetosCapturados.append(novo)
+                        }
                     }
 
+                    print("✅ Capturado: \(artropode.nomePopular)")
+                }
+
+                DispatchQueue.main.async {
                     self.mensagem = "Inseto capturado!"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.mensagem = nil
@@ -167,5 +188,10 @@ class ARCoordinator: NSObject, ObservableObject {
                 }
             }
         }
+    }
+
+    deinit {
+        timerCheckCapture?.invalidate()
+        timerLoadInseto?.invalidate()
     }
 }

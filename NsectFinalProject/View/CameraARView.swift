@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CameraARView: View {
-    @StateObject private var arCoordinator = ARCoordinator()
+    @ObservedObject var arCoordinator: ARCoordinator
     @State private var glow = false
 
     //  dismiss para fechar a tela cheia

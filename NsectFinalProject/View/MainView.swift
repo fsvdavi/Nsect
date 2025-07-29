@@ -10,35 +10,33 @@
 import SwiftUI
 
 struct MainView: View {
+    @StateObject private var arCoordinator = ARCoordinator() // centraliza aqui
+
     @State private var selectedTab: AppTab = .home
     @State private var showCamera = false
 
     var body: some View {
         ZStack {
-            // Conteúdo principal da aba selecionada
             switch selectedTab {
             case .home:
                 HomeView(selectedTab: $selectedTab)
             case .profile:
                 ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
             case .inventory:
-//                ProfileView(selectedTab: $selectedTab, showCamera: $showCamera)
-                InventoryInsectView()
+                InventoryInsectView(arCoordinator: arCoordinator)
             }
 
-
-            // Tab bar fixa em todas as telas
             VStack {
                 Spacer()
                 TabBar(selectedTab: $selectedTab, showCamera: $showCamera)
                     .frame(maxWidth: .infinity)
             }
-
         }
         .ignoresSafeArea(edges: .bottom)
         .fullScreenCover(isPresented: $showCamera) {
-            CameraARView()
+            CameraARView(arCoordinator: arCoordinator)
         }
+
     }
 }
 

@@ -14,6 +14,7 @@ class Artropode {
     var imagemURL: String
     var modelo3d: String
     var id: String
+    var foiCapturado: Bool = false
 
     init(
         classe: String,
@@ -39,10 +40,11 @@ class Artropode {
         self.imagemURL = imagemURL
         self.modelo3d = modelo3d
         self.id = id
+        self.foiCapturado = false
     }
 }
 
-/// Função auxiliar para separar campos CSV considerando aspas
+
 func parseCSVLine(_ line: String) -> [String] {
     var results: [String] = []
     var current = ""

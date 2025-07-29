@@ -34,8 +34,18 @@ struct HomeView: View {
                 .padding(.bottom, 10)
 
                 Spacer()
+                
+                HStack {
+                    Image("texthome")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 120)
+                        .padding(.horizontal, 6)
+                        .padding(.top, -50)
+                    Spacer()
+                }
 
-                // Conteúdo principal
+
                 Button {
                     selectedTab = .inventory
                 } label: {
@@ -44,6 +54,7 @@ struct HomeView: View {
                         .scaledToFit()
                         .scaleEffect(1.35)
                         .shadow(radius: 20)
+                        .padding(.top, -80)
                 }
                 .buttonStyle(.plain)
 
