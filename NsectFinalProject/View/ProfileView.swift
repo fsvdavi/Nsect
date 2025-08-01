@@ -69,7 +69,6 @@ struct ProfileView: View {
                 .ignoresSafeArea(edges: .top)
                 .padding(.bottom, -10)
 
-                // Lista de Conquistas
                 ScrollView {
                     VStack(spacing: 16) {
                         ForEach(coordinator.conquistas.sorted { $0.isUnlocked && !$1.isUnlocked }) { achievement in
@@ -92,8 +91,6 @@ struct ProfileView: View {
 private struct ProfilePreviewWrapper: View {
     @State private var selectedTab: AppTab = .profile
     @State private var showCamera: Bool = false
-
-    // Criando um ARCoordinator fictício para o preview funcionar
     @StateObject private var fakeCoordinator = ARCoordinator()
 
     var body: some View {

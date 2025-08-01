@@ -33,7 +33,9 @@ class ARCoordinator: NSObject, ObservableObject {
 
     private var timerCheckCapture: Timer?
     private var timerLoadInseto: Timer?
-
+    
+    // MARK: - Cena AR
+    
     func configurarCenaAR() -> ARView {
         print("🔄 Configurando ARView e resetando estado")
 
@@ -61,7 +63,7 @@ class ARCoordinator: NSObject, ObservableObject {
             self?.verificarSePodeCapturar()
         }
 
-        timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             if self.boxEntity == nil {
                 self.carregarInsetoAleatorio(anchor: anchor)
@@ -200,35 +202,6 @@ class ARCoordinator: NSObject, ObservableObject {
         }
     }
 
-    func atualizarConquistas() {
-        if insetosCapturados.count >= 1 {
-            desbloquearConquista(titulo: "Explorador Iniciante")
-        }
-
-        let totalComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }.count
-        if insetosCapturados.count == totalComModelo {
-            desbloquearConquista(titulo: "Mestre dos Insetos")
-        }
-
-        let todosCapturados = artropodesDisponiveis.filter { $0.foiCapturado }.count
-        if todosCapturados == artropodesDisponiveis.count {
-            desbloquearConquista(titulo: "Entomologista Sênior")
-        }
-
-        let horaAtual = Calendar.current.component(.hour, from: Date())
-        if horaAtual >= 18 || horaAtual <= 6 {
-            desbloquearConquista(titulo: "Caçador Noturno")
-        }
-    }
-
-    func desbloquearConquista(titulo: String) {
-        if let index = conquistas.firstIndex(where: { $0.title == titulo && !$0.isUnlocked }) {
-            conquistas[index].isUnlocked = true
-            print("🏆 Conquista desbloqueada: \(titulo)")
-            salvarConquistas() // ✅ Salva imediatamente ao desbloquear
-        }
-    }
-
     deinit {
         timerCheckCapture?.invalidate()
         timerLoadInseto?.invalidate()
@@ -276,6 +249,35 @@ class ARCoordinator: NSObject, ObservableObject {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("conquistas.json")
     }
+    
+    func atualizarConquistas() {
+        if insetosCapturados.count >= 1 {
+            desbloquearConquista(titulo: "Explorador Iniciante")
+        }
+
+        let totalComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }.count
+        if insetosCapturados.count == totalComModelo {
+            desbloquearConquista(titulo: "Mestre dos Insetos")
+        }
+
+        let todosCapturados = artropodesDisponiveis.filter { $0.foiCapturado }.count
+        if todosCapturados == artropodesDisponiveis.count {
+            desbloquearConquista(titulo: "Entomologista Sênior")
+        }
+
+        let horaAtual = Calendar.current.component(.hour, from: Date())
+        if horaAtual >= 18 || horaAtual <= 6 {
+            desbloquearConquista(titulo: "Caçador Noturno")
+        }
+    }
+    
+    func desbloquearConquista(titulo: String) {
+        if let index = conquistas.firstIndex(where: { $0.title == titulo && !$0.isUnlocked }) {
+            conquistas[index].isUnlocked = true
+            print("🏆 Conquista desbloqueada: \(titulo)")
+            salvarConquistas()
+        }
+    }
 
     func salvarConquistas() {
         let conquistasSalvas = conquistas.map { AchievementSalvo(title: $0.title, isUnlocked: $0.isUnlocked) }
@@ -308,7 +310,7 @@ class ARCoordinator: NSObject, ObservableObject {
     override init() {
         super.init()
         carregarInventario()
-        carregarConquistas() // ✅ Adicionado
+        carregarConquistas()
     }
     
 }

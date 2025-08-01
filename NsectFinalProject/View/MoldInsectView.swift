@@ -6,7 +6,6 @@ struct MoldInsectView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // Modelo 3D no topo com offset, igual ao antigo Image
             CuuustomSceneView(named: insect.modelo3d)
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 500, height: 250)
@@ -35,7 +34,7 @@ struct MoldInsectView: View {
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundColor(.white)
                                 .lineLimit(1)
-                                .fixedSize(horizontal: true, vertical: false) // evita quebra/truncamento
+                                .fixedSize(horizontal: true, vertical: false)
                                 .padding(.leading, 12)
 
                             Text(insect.nomePopular)
@@ -55,7 +54,6 @@ struct MoldInsectView: View {
     }
 }
 
-// Seu UIViewRepresentable para SCNView do modelo 3D
 struct CuuustomSceneView: UIViewRepresentable {
     let named: String
     
@@ -68,14 +66,13 @@ struct CuuustomSceneView: UIViewRepresentable {
         scnView.allowsCameraControl = false
         scnView.autoenablesDefaultLighting = true
         scnView.backgroundColor = .clear
-        scnView.isUserInteractionEnabled = false // <<< DESATIVA INTERAÇÃO TOTAL
+        scnView.isUserInteractionEnabled = false
         return scnView
     }
     
     func updateUIView(_ uiView: SCNView, context: Context) {}
 }
 
-// Preview com carregarArtropodes
 struct InsectetailView_Previews: PreviewProvider {
     static var previews: some View {
         let artrópodes = carregarArtropodes()

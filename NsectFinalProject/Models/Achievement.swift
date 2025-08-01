@@ -1,10 +1,3 @@
-//
-//  Untitled.swift
-//  NsectFinalProject
-//
-//  Created by found on 29/07/25.
-//
-
 import Foundation
 
 struct Achievement: Identifiable {

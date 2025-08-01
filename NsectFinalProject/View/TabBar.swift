@@ -1,10 +1,3 @@
-//
-//  TabBar.swift
-//  NsectFinalProject
-//
-//  Created by found on 25/07/25.
-//
-
 import SwiftUI
 
 enum AppTab {

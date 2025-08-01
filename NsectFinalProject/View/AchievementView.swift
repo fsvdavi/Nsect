@@ -1,10 +1,3 @@
-//
-//  AchievementView.swift
-//  NsectFinalProject
-//
-//  Created by found on 29/07/25.
-//
-
 import SwiftUI
 
 struct AchievementView: View {
@@ -20,7 +13,6 @@ struct AchievementView: View {
                 )
 
             HStack {
-                // Ícone à esquerda: medalha ou cadeado
                 Image(systemName: achievement.isUnlocked ? "trophy" : "lock.fill")
                     .foregroundColor(.white.opacity(0.9))
                     .font(.system(size: 28))

@@ -6,14 +6,12 @@ struct HomeView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Fundo
             Image("forestBackground")
                 .resizable()
                 .opacity(0.8)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Barra superior
                 ZStack {
                     Color(red: 0, green: 0.3, blue: 0)
                         .mask(

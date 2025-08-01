@@ -4,18 +4,14 @@ struct CameraARView: View {
     @ObservedObject var arCoordinator: ARCoordinator
     @State private var glow = false
 
-    //  dismiss para fechar a tela cheia
     @Environment(\.dismiss) private var dismiss
 
     
     var body: some View {
         ZStack {
-            // Ocupar toda tela
             ARViewContainerWrapper(coordinator: arCoordinator)
                 .edgesIgnoringSafeArea(.all)
 
-            
-            //  Botão de voltar
             VStack {
                 HStack {
                     Button(action: {

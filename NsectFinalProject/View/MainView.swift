@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject private var arCoordinator = ARCoordinator() // centraliza aqui
+    @StateObject private var arCoordinator = ARCoordinator() 
 
     @State private var selectedTab: AppTab = .home
     @State private var showCamera = false

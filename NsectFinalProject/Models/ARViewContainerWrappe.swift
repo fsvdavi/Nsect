@@ -9,7 +9,6 @@ struct ARViewContainerWrapper: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: ARView, context: Context) {
-        // Nenhuma atualização dinâmica por enquanto
     }
 }
 
