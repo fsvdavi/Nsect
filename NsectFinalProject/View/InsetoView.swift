@@ -19,7 +19,6 @@ struct InsetoDetailView: View {
     }
     var body: some View {
             ZStack(alignment: .top) {
-                // Fundo da tela
                 Image("forestBackground")
                     .resizable()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -28,7 +27,6 @@ struct InsetoDetailView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // TopBar com canto arredondado e "Nsect"
                     ZStack {
                         Rectangle()
                             .fill(Color(red: 0, green: 0.3, blue: 0))
@@ -46,12 +44,10 @@ struct InsetoDetailView: View {
                     .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                     .ignoresSafeArea(edges: .top)
                     .padding(.bottom, -62)
-                    
-                    // Agora continua com ScrollView normalmente
-                    
+                                        
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 1) {
-                            HStack(alignment: .firstTextBaseline, spacing: 140) {  // diminui o spacing do HStack
+                            HStack(alignment: .firstTextBaseline, spacing: 140) {
                                 Text("#0\(artropode.id)")
                                     .font(.system(size: 25))
                                     .fontWeight(.bold)
@@ -69,7 +65,6 @@ struct InsetoDetailView: View {
                             .padding(.bottom, -60)
 
 
-                            // Card com modelo 3D sem fundo branco
                             ZStack {
                                 RoundedRectangle(cornerRadius: 50)
                                     .fill(
@@ -89,7 +84,6 @@ struct InsetoDetailView: View {
                             .padding(.horizontal)
                             
                             ZStack {
-                                // background gradiente
                                 RoundedRectangle(cornerRadius: 50)
                                     .fill(
                                         LinearGradient(
@@ -100,7 +94,6 @@ struct InsetoDetailView: View {
                                     )
                                     .frame(height: 220)
 
-                                // imagem preenchendo todo o card
                                 AsyncImage(url: URL(string: artropode.imagemURL)) { phase in
                                     switch phase {
                                     case .empty:
@@ -108,12 +101,12 @@ struct InsetoDetailView: View {
                                     case .success(let img):
                                         img
                                             .resizable()
-                                            .scaledToFill()          // ⬅️ preenche todo o espaço
-                                            .frame(height: 220)      // ⬅️ mesma altura do RoundedRectangle
-                                            .clipped()               // ⬅️ corta o excesso
-                                            .cornerRadius(50)        // ⬅️ mesmo cornerRadius do RoundedRectangle
+                                            .scaledToFill()
+                                            .frame(height: 220)
+                                            .clipped()
+                                            .cornerRadius(50)
                                     case .failure:
-                                        Color.gray                // fallback simples
+                                        Color.gray
                                             .frame(height: 220)
                                             .cornerRadius(50)
                                     @unknown default:
@@ -126,9 +119,7 @@ struct InsetoDetailView: View {
 
                             Spacer()
                           
-                            
-                            // Informações
-                            VStack {
+                                VStack {
                                 HStack {
                                     infoColumn(title: "Tamanho", value: artropode.tamanho)
                                     Spacer()
@@ -149,7 +140,6 @@ struct InsetoDetailView: View {
                                 
                                 VStack(alignment: .leading, spacing: 12) {
                                     Group {
-                                        // Rótulo em serifado negrito
                                         Text("Nome científico:")
                                             .font(.system(size: 22, weight: .bold, design: .serif))
                                             .foregroundStyle(
@@ -162,7 +152,6 @@ struct InsetoDetailView: View {
                                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 1)
                                             .padding(.top, 4)
 
-                                        // Valor em serif itálico, reforçando o estilo científico
                                         Text(artropode.nomeCientifico)
                                             .font(.system(size: 28, weight: .regular, design: .serif))
                                             .italic()
@@ -179,7 +168,6 @@ struct InsetoDetailView: View {
                                                     .opacity(0.3)
                                             )
 
-                                        // Cabeçalho de Descrição também em serif
                                         Text("Descrição:")
                                             .font(.system(size: 22, weight: .bold, design: .serif))
                                             .foregroundStyle(
@@ -192,7 +180,6 @@ struct InsetoDetailView: View {
                                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 1)
                                             .padding(.top, 4)
 
-                                        // Texto corrido em sans-serif neutro para contraste
                                         Text(artropode.descricao)
                                             .font(.system(size: 16, weight: .regular, design: .serif))
                                             .foregroundColor(.white)
@@ -215,7 +202,6 @@ struct InsetoDetailView: View {
                                             )
                                             .lineSpacing(5)
 
-                                        // Cabeçalho de Curiosidade em serif
                                         Text("Curiosidade:")
                                             .font(.system(size: 22, weight: .bold, design: .serif))
                                             .foregroundStyle(
@@ -228,7 +214,6 @@ struct InsetoDetailView: View {
                                             .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 1)
                                             .padding(.top, 4)
 
-                                        // Valor de curiosidade em sans-serif
                                         Text(artropode.curiosidade)
                                             .font(.system(size: 16, weight: .medium, design: .monospaced))
                                             .foregroundColor(.white)
@@ -281,18 +266,15 @@ struct InsetoImageView: View {
         AsyncImage(url: URL(string: imageURL)) { phase in
             switch phase {
             case .empty:
-                // Enquanto carrega
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             case .success(let image):
-                // Quando carregar, exibe a imagem
                 image
                     .resizable()
                     .scaledToFit()
                     .frame(width: 200, height: 200)
                     .cornerRadius(12)
             case .failure:
-                // Se falhar, mostra um ícone genérico
                 Image(systemName: "photo")
                     .resizable()
                     .scaledToFit()
@@ -339,7 +321,6 @@ func infoColumn(title: String, value: String) -> some View {
     struct CustomSceneView: UIViewRepresentable {
         let named: String
 
-        // Dicionário de escalas
         let insetoEscalas: [String: SIMD3<Float>] = [
             "ant": SIMD3<Float>(1.5, 1.5, 1.5),
             "spider": SIMD3<Float>(1.8, 1.8, 1.8),
@@ -355,7 +336,6 @@ func infoColumn(title: String, value: String) -> some View {
             if let scene = SCNScene(named: named + ".scn") {
                 scene.background.contents = UIColor.clear
                 
-                // Escala customizada
                 let scale = insetoEscalas[named] ?? SIMD3<Float>(0.05, 0.05, 0.05)
                 scene.rootNode.scale = SCNVector3(scale.x, scale.y, scale.z)
                 
@@ -370,7 +350,6 @@ func infoColumn(title: String, value: String) -> some View {
         func updateUIView(_ uiView: SCNView, context: Context) {}
     }
 
-    // Preview com carregarArtropodes
     struct InsetoDetailView_Previews: PreviewProvider {
         static var previews: some View {
             let artrópodes = carregarArtropodes()
