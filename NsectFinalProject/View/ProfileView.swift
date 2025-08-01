@@ -36,7 +36,7 @@ struct ProfileView: View {
                         .clipShape(RoundedCorners(radius: 40, corners: [.bottomLeft, .bottomRight]))
 
                     VStack(spacing: 12) {
-                        Text("PROFILE")
+                        Text("PERFIL")
                             .font(.system(size: 12))
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -51,7 +51,7 @@ struct ProfileView: View {
                                     .clipShape(Circle())
                             )
 
-                        Text("Hatsune Miku")
+                        Text("Usuário")
                             .font(.system(size: 18))
                             .fontWeight(.bold)
                             .foregroundColor(.white)

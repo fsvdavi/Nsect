@@ -2,6 +2,8 @@ import SwiftUI
 
 struct InventoryInsectView: View {
     @ObservedObject var arCoordinator: ARCoordinator
+    @Binding var selectedTab: AppTab
+    @Binding var selectedInseto: Artropode?
 
     struct RoundedCorners: Shape {
         var radius: CGFloat = 25.0
@@ -18,7 +20,6 @@ struct InventoryInsectView: View {
     }
 
     var body: some View {
-        NavigationStack {
             ZStack(alignment: .top) {
                 Image("forestBackground")
                     .resizable()
@@ -28,7 +29,9 @@ struct InventoryInsectView: View {
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         ForEach(arCoordinator.insetosCapturados) { inseto in
-                            NavigationLink(destination: InsetoDetailView(artropode: inseto)) {
+                            Button {
+                                selectedInseto = inseto
+                            } label: {
                                 MoldInsectView(insect: inseto)
                             }
                             .buttonStyle(PlainButtonStyle())
@@ -55,12 +58,29 @@ struct InventoryInsectView: View {
                 .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
             }
             .edgesIgnoringSafeArea(.top)
-        }
+        
     }
 }
 
 
-#Preview {
-    InventoryInsectView(arCoordinator: ARCoordinator())
-}
+struct InventoryInsectView_Previews: PreviewProvider {
+    @State static var selectedTab: AppTab = .inventory
+    @State static var selectedInseto: Artropode? = carregarArtropodes().first
 
+    static var previews: some View {
+        InventoryInsectView(
+            arCoordinator: {
+                let coordinator = ARCoordinator()
+                // Simula insetos capturados no preview
+                coordinator.insetosCapturados = carregarArtropodes().prefix(4).map { art in
+                    let copy = art
+                    copy.foiCapturado = true
+                    return copy
+                }
+                return coordinator
+            }(),
+            selectedTab: $selectedTab,
+            selectedInseto: $selectedInseto
+        )
+    }
+}
