@@ -149,26 +149,103 @@ struct InsetoDetailView: View {
                                 
                                 VStack(alignment: .leading, spacing: 12) {
                                     Group {
+                                        // Rótulo em serifado negrito
                                         Text("Nome científico:")
-                                            .font(.headline)
+                                            .font(.system(size: 22, weight: .bold, design: .serif))
+                                            .foregroundStyle(
+                                                LinearGradient(
+                                                    colors: [Color.white, Color.green.opacity(1.0)],
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            )
+                                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 1)
+                                            .padding(.top, 4)
+
+                                        // Valor em serif itálico, reforçando o estilo científico
                                         Text(artropode.nomeCientifico)
-                                            .font(.body)
+                                            .font(.system(size: 28, weight: .regular, design: .serif))
+                                            .italic()
                                             .foregroundColor(.secondary)
-                                        
+                                            .kerning(1.2)
+                                            .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
+                                            .overlay(
+                                                Text(artropode.nomeCientifico)
+                                                    .font(.system(size: 28, weight: .regular, design: .serif))
+                                                    .italic()
+                                                    .foregroundColor(.secondary)
+                                                    .offset(x: 0.5, y: 0.5)
+                                                    .blendMode(.multiply)
+                                                    .opacity(0.3)
+                                            )
+
+                                        // Cabeçalho de Descrição também em serif
                                         Text("Descrição:")
-                                            .font(.headline)
+                                            .font(.system(size: 22, weight: .bold, design: .serif))
+                                            .foregroundStyle(
+                                                LinearGradient(
+                                                    colors: [Color.white, Color.green.opacity(1.0)],
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            )
+                                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 1)
                                             .padding(.top, 4)
+
+                                        // Texto corrido em sans-serif neutro para contraste
                                         Text(artropode.descricao)
-                                            .font(.body)
-                                            .foregroundColor(.primary)
-                                        
+                                            .font(.system(size: 16, weight: .regular, design: .serif))
+                                            .foregroundColor(.white)
+                                            .padding(16)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [Color.green.opacity(0.8), Color.green.opacity(0.6)]),
+                                                            startPoint: .topLeading,
+                                                            endPoint: .bottomTrailing
+                                                        )
+                                                    )
+                                                    .shadow(color: .black.opacity(0.4), radius: 4, x: 2, y: 2)
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                                    .blur(radius: 1)
+                                            )
+                                            .lineSpacing(5)
+
+                                        // Cabeçalho de Curiosidade em serif
                                         Text("Curiosidade:")
-                                            .font(.headline)
+                                            .font(.system(size: 22, weight: .bold, design: .serif))
+                                            .foregroundStyle(
+                                                LinearGradient(
+                                                    colors: [Color.white, Color.green.opacity(1.0)],
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            )
+                                            .shadow(color: .black.opacity(0.4), radius: 2, x: 1, y: 1)
                                             .padding(.top, 4)
+
+                                        // Valor de curiosidade em sans-serif
                                         Text(artropode.curiosidade)
-                                            .font(.body)
-                                            .foregroundColor(.primary)
+                                            .font(.system(size: 16, weight: .medium, design: .monospaced))
+                                            .foregroundColor(.white)
+                                            .padding(12)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .fill(Color.black.opacity(0.2))
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                    .stroke(Color.white.opacity(0.6), lineWidth: 1)
+                                            )
+                                            .shadow(color: .black.opacity(0.4), radius: 4, x: 2, y: 2)
+                                            .lineSpacing(6)
+
                                     }
+
                                     .padding(.horizontal)
                                 }
                                 .padding(.bottom, 16)
@@ -230,16 +307,35 @@ struct InsetoImageView: View {
 
 
     @ViewBuilder
-    func infoColumn(title: String, value: String) -> some View {
-        VStack(alignment: .center, spacing: 4) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.white)
-            Text(value)
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.8))
-        }
+func infoColumn(title: String, value: String) -> some View {
+    VStack(alignment: .center, spacing: 7) {
+        Text(title)
+            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .foregroundStyle(
+                LinearGradient(
+                    colors: [Color.green, Color.teal],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .shadow(color: .black.opacity(1.0), radius: 2, x: 1, y: 1)
+        Text(value)
+            .font(.system(size: 16, weight: .medium, design: .serif))
+            .foregroundColor(.white)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.black.opacity(0.25))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(Color.white.opacity(0.5), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.3), radius: 2, x: 1, y: 1)
+
     }
+}
     struct CustomSceneView: UIViewRepresentable {
         let named: String
 
