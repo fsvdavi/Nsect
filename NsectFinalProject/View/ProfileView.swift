@@ -45,7 +45,7 @@ struct ProfileView: View {
                             .fill(Color.white.opacity(0.9))
                             .frame(width: 150, height: 150)
                             .overlay(
-                                Image("usuario")
+                                Image("hatsunemikuprofile")
                                     .resizable()
                                     .scaledToFit()
                                     .clipShape(Circle())
