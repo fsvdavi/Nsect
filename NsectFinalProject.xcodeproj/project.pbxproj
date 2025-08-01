@@ -18,9 +18,22 @@
 		229F9CE92E18673600619C20 /* NsectFinalProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NsectFinalProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		222F2C502E3D268600CECDA4 /* Exceptions for "NsectFinalProject" folder in "NsectFinalProject" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 229F9CE82E18673600619C20 /* NsectFinalProject */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		229F9CEB2E18673600619C20 /* NsectFinalProject */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				222F2C502E3D268600CECDA4 /* Exceptions for "NsectFinalProject" folder in "NsectFinalProject" target */,
+			);
 			path = NsectFinalProject;
 			sourceTree = "<group>";
 		};
@@ -275,6 +288,7 @@
 				DEVELOPMENT_TEAM = 7N5W9S3TWP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NsectFinalProject/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Nsect;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Captura de Inseto";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -306,6 +320,7 @@
 				DEVELOPMENT_TEAM = 7N5W9S3TWP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NsectFinalProject/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Nsect;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Captura de Inseto";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
