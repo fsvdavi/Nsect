@@ -182,8 +182,10 @@ class ARCoordinator: NSObject, ObservableObject {
                             self.insetosCapturados.append(novo)
                         }
 
+                        self.salvarInventario()
                         self.atualizarConquistas()
                     }
+
 
                     print("✅ Capturado: \(artropode.nomePopular)")
                 }
@@ -223,6 +225,7 @@ class ARCoordinator: NSObject, ObservableObject {
         if let index = conquistas.firstIndex(where: { $0.title == titulo && !$0.isUnlocked }) {
             conquistas[index].isUnlocked = true
             print("🏆 Conquista desbloqueada: \(titulo)")
+            salvarConquistas() // ✅ Salva imediatamente ao desbloquear
         }
     }
 
@@ -230,4 +233,82 @@ class ARCoordinator: NSObject, ObservableObject {
         timerCheckCapture?.invalidate()
         timerLoadInseto?.invalidate()
     }
+    // MARK: - Salvamento e Carregamento de Inventário
+
+    private var caminhoInventario: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("insetosCapturados.json")
+    }
+
+    func salvarInventario() {
+        let ids = insetosCapturados.map { ArtropodeSalvo(id: $0.id) }
+        do {
+            let dados = try JSONEncoder().encode(ids)
+            try dados.write(to: caminhoInventario)
+            print("Inventário salvo.")
+        } catch {
+            print("Erro ao salvar inventário: \(error)")
+        }
+    }
+
+    func carregarInventario() {
+        do {
+            let dados = try Data(contentsOf: caminhoInventario)
+            let ids = try JSONDecoder().decode([ArtropodeSalvo].self, from: dados)
+            let capturados = artropodesDisponiveis.filter { art in
+                ids.contains(where: { $0.id == art.id })
+            }
+
+            for art in capturados {
+                art.foiCapturado = true
+            }
+            insetosCapturados = capturados
+
+            print("Inventário carregado.")
+        } catch {
+            print("Nenhum inventário salvo ou erro ao carregar: \(error)")
+        }
+    }
+    
+    // MARK: - Salvamento e Carregamento de Conquistas
+
+    private var caminhoConquistas: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("conquistas.json")
+    }
+
+    func salvarConquistas() {
+        let conquistasSalvas = conquistas.map { AchievementSalvo(title: $0.title, isUnlocked: $0.isUnlocked) }
+        do {
+            let dados = try JSONEncoder().encode(conquistasSalvas)
+            try dados.write(to: caminhoConquistas)
+            print("🏅 Conquistas salvas.")
+        } catch {
+            print("❌ Erro ao salvar conquistas: \(error)")
+        }
+    }
+
+    func carregarConquistas() {
+        do {
+            let dados = try Data(contentsOf: caminhoConquistas)
+            let conquistasSalvas = try JSONDecoder().decode([AchievementSalvo].self, from: dados)
+
+            for conquistaSalva in conquistasSalvas {
+                if let index = conquistas.firstIndex(where: { $0.title == conquistaSalva.title }) {
+                    conquistas[index].isUnlocked = conquistaSalva.isUnlocked
+                }
+            }
+
+            print("📥 Conquistas carregadas.")
+        } catch {
+            print("⚠️ Nenhuma conquista salva ou erro ao carregar: \(error)")
+        }
+    }
+    
+    override init() {
+        super.init()
+        carregarInventario()
+        carregarConquistas() // ✅ Adicionado
+    }
+    
 }
