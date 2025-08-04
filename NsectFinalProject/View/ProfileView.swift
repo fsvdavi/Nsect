@@ -51,7 +51,7 @@ struct ProfileView: View {
                                     .clipShape(Circle())
                             )
 
-                        Text("Hatsune Miku")
+                        Text("Usuário")
                             .font(.system(size: 18))
                             .fontWeight(.bold)
                             .foregroundColor(.white)
