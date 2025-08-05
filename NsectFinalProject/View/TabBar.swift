@@ -70,8 +70,8 @@ struct TabBar: View {
 
         var body: some View {
             TabBar(selectedTab: $selectedTab, showCamera: $showCamera)
-                .padding() // Para dar espaço ao redor no preview
-                .background(Color.gray.opacity(0.2)) // Para visualização clara
+                .padding() 
+                .background(Color.gray.opacity(0.2))
         }
     }
 

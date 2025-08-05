@@ -57,20 +57,20 @@ func parseCSVLine(_ line: String) -> [String] {
 
         if char == "\"" {
             if insideQuotes && i + 1 < characters.count && characters[i + 1] == "\"" {
-                // Aspas escapadas dentro de um campo
+              
                 current.append("\"")
                 i += 1
             } else {
-                // Abre ou fecha aspas
+                
                 insideQuotes.toggle()
             }
         } else if char == "," && !insideQuotes {
-            // Separador de campo
+         
             let trimmed = current.trimmingCharacters(in: .whitespaces)
             results.append(trimmed.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
             current = ""
         } else {
-            // Caractere normal
+           
             current.append(char)
         }
         i += 1
@@ -95,7 +95,7 @@ func carregarArtropodes() -> [Artropode] {
         let linhas = conteudo.components(separatedBy: "\n")
 
         for (index, linha) in linhas.enumerated() {
-            if index == 0 { continue } // Pula cabeçalho
+            if index == 0 { continue }
             guard !linha.isEmpty else { continue }
 
             let col = parseCSVLine(linha)

@@ -26,7 +26,7 @@ struct MoldInsectView: View {
 
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color(red: 0.4, green: 0.4, blue: 0.4))
-                    .frame(width: 180, height: 35) // aumentei largura aqui
+                    .frame(width: 180, height: 35) 
                     .shadow(color: .black.opacity(0.1), radius: 3, x: 0, y: 2)
                     .overlay {
                         HStack(spacing: 8) {
