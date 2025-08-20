@@ -47,22 +47,74 @@ struct InsetoDetailView: View {
                                         
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 1) {
-                            HStack(alignment: .firstTextBaseline, spacing: 140) {
-                                Text("#0\(artropode.id)")
-                                    .font(.system(size: 25))
-                                    .fontWeight(.bold)
-                                    .alignmentGuide(.firstTextBaseline) { d in d[.firstTextBaseline] }
+                            HStack(alignment: .center, spacing: 12) {
+                                // Badge com o ID
+                                ZStack {
+                                    Capsule()
+                                        .fill(
+                                            LinearGradient(
+                                                colors: [Color.green.opacity(0.95), Color(red: 0.04, green: 0.35, blue: 0.12)],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
+                                        .frame(minWidth: 72, maxWidth: 92, minHeight: 44, maxHeight: 44)
+                                        .shadow(color: Color.black.opacity(0.25), radius: 6, x: 0, y: 4)
 
-                                Text(artropode.nomePopular)
-                                    .font(.title2)
-                                    .fontWeight(.bold)
-                                    .lineLimit(1)
-                                    .truncationMode(.tail)
-                                    .alignmentGuide(.firstTextBaseline) { d in d[.firstTextBaseline] }
+                                    Text("#\(String(format: "%02d", Int(artropode.id) ?? 0))")
+                                        .font(.system(size: 16, weight: .black, design: .rounded))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 6)
+                                        .accessibilityLabel("ID do inseto")
+                                }
+
+                                // Título principal (nome popular) + nome científico menor
+                                VStack(alignment: .leading, spacing: 4) {
+                                    // Nome popular estilizado, com gradiente e contorno
+                                    Text(artropode.nomePopular)
+                                        .font(.system(size: 26, weight: .heavy, design: .serif))
+                                        .foregroundStyle(
+                                            LinearGradient(
+                                                colors: [Color.white, Color(hue: 0.34, saturation: 0.6, brightness: 0.25)],
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
+                                        )
+                                        .shadow(color: Color.black.opacity(0.35), radius: 6, x: 0, y: 3)
+                                        .overlay( // contorno sutil (stroke)
+                                            Text(artropode.nomePopular)
+                                                .font(.system(size: 26, weight: .heavy, design: .serif))
+                                                .foregroundColor(.clear)
+                                                .shadow(color: Color.green.opacity(0.4), radius: 0, x: 0, y: 0)
+                                                .mask(
+                                                    Text(artropode.nomePopular)
+                                                        .font(.system(size: 26, weight: .heavy, design: .serif))
+                                                )
+                                        )
+                                        .lineLimit(1)
+                                        .truncationMode(.tail)
+
+                                    // Nome científico menor, itálico e elegante
+                                    Text(artropode.nomeCientifico)
+                                        .font(.system(size: 14, weight: .medium, design: .serif))
+                                        .italic()
+                                        .foregroundColor(Color.white.opacity(0.9))
+                                        .padding(.vertical, 0)
+                                        .lineLimit(1)
+                                        .truncationMode(.tail)
+                                }
+
+                                Spacer()
+
+                                // Pequeno ícone decorativo (folha) à direita
+                                Image(systemName: "leaf.fill")
+                                    .font(.system(size: 22, weight: .bold))
+                                    .foregroundStyle(
+                                        LinearGradient(colors: [Color.white.opacity(0.9), Color.green.opacity(0.9)], startPoint: .top, endPoint: .bottom)
+                                    )
+                                    .shadow(color: Color.black.opacity(0.25), radius: 4, x: 0, y: 2)
                             }
                             .padding(.horizontal)
-                            .frame(maxWidth: .infinity)
-                            .padding(.bottom, -60)
 
 
                             ZStack {
