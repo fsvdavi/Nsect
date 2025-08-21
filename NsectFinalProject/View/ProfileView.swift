@@ -2,8 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     let topBarHeight: CGFloat = 360
-    @Binding var showCamera: Bool
-    @ObservedObject var coordinator: ARCoordinator
+    @StateObject private var coordinator = ARCoordinator() // Criado internamente
 
     struct RoundedCorners: Shape {
         var radius: CGFloat = 25.0
@@ -70,7 +69,6 @@ struct ProfileView: View {
                         ForEach(coordinator.conquistas.sorted { $0.isUnlocked && !$1.isUnlocked }) { achievement in
                             AchievementView(achievement: achievement)
                         }
-
                     }
                     .padding(.top, 10)
                     .padding(.bottom, 0)
@@ -79,5 +77,3 @@ struct ProfileView: View {
         }
     }
 }
-
-
