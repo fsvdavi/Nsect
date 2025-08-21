@@ -303,10 +303,9 @@ struct InsetoDetailView: View {
                 .ignoresSafeArea(edges: .bottom)
 
             }
+            .backgroundMusic(.inventoryDetail)
         }
     }
-    
-import SwiftUI
 
 struct InsetoImageView: View {
     let imageURL: String
@@ -410,4 +409,3 @@ func infoColumn(title: String, value: String) -> some View {
             }
         }
     }
-//}

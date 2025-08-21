@@ -75,5 +75,6 @@ struct ProfileView: View {
                 }
             }
         }
+        .backgroundMusic(.homeProfile)
     }
 }

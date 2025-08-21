@@ -68,6 +68,7 @@ struct HomeView: View {
                 }
             }
         }
+        .backgroundMusic(.homeProfile)
     }
 }
 

@@ -128,7 +128,9 @@ struct InventoryInsectView: View {
                         } else {
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                                 ForEach(items, id: \.id) { inseto in
-                                    NavigationLink(destination: InsetoDetailView(artropode: inseto)) {
+                                    NavigationLink(destination: InsetoDetailView(artropode: inseto)
+                                        .backgroundMusic(.inventoryDetail) // 🔊 detalhe também usa mesma trilha
+                                    ) {
                                         MoldInsectView(insect: inseto)
                                             .shadow(color: .black.opacity(0.22), radius: 4, x: 0, y: 2)
                                             .scaleEffect(0.995)
@@ -145,6 +147,7 @@ struct InventoryInsectView: View {
             }
             .ignoresSafeArea(edges: .top)
         }
+        .backgroundMusic(.inventoryDetail) // 🔊 música do inventário
     }
 
     // Search bar component (reaproveitado)
@@ -190,7 +193,6 @@ struct InventoryInsectView: View {
         switch sortOption {
         case .porID:
             results.sort { a, b in
-                // tenta converter id para número; se falhar, fallback para comparação por string
                 if let ai = Int(a.id), let bi = Int(b.id) {
                     return ai < bi
                 } else {
@@ -204,6 +206,7 @@ struct InventoryInsectView: View {
         return results
     }
 }
+
 
 // Preview seguro: wrapper que popula o coordinator em onAppear
 #Preview {
