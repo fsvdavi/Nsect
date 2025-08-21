@@ -13,7 +13,7 @@ struct SplashView: View {
 
     var body: some View {
         if isActive {
-            MainView() // depois vai para sua tela principal
+            HomeView() // depois vai para sua tela principal
         } else {
             VStack {
                 Image("nsectLogo") // sua logo

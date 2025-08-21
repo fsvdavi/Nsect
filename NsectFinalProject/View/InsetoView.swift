@@ -19,11 +19,8 @@ struct InsetoDetailView: View {
     }
     var body: some View {
             ZStack(alignment: .top) {
-                Image("forestBackground")
+                Image("background")
                     .resizable()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
-                    .opacity(0.8)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {

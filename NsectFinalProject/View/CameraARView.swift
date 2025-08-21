@@ -3,35 +3,14 @@ import SwiftUI
 struct CameraARView: View {
     @ObservedObject var arCoordinator: ARCoordinator
     @State private var glow = false
-
-    @Environment(\.dismiss) private var dismiss
-
+    @State private var showSkillCheck = false  // controla exibição do skill check
     
     var body: some View {
         ZStack {
+            // Câmera
             ARViewContainerWrapper(coordinator: arCoordinator)
                 .edgesIgnoringSafeArea(.all)
-
-            VStack {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(Color.black.opacity(0.6))
-                            .clipShape(Circle())
-                    }
-                    .padding(.leading, 20)
-                    .padding(.top, 60)
-
-                    Spacer()
-                }
-                Spacer()
-            }
-
+            
             // Mensagem de captura
             VStack {
                 if let mensagem = arCoordinator.mensagem {
@@ -60,9 +39,6 @@ struct CameraARView: View {
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .animation(.easeInOut(duration: 0.3), value: arCoordinator.mensagem)
                         .onAppear {
-                            
-                           
-                            
                             withAnimation(.easeInOut(duration: 1).repeatForever(autoreverses: true)) {
                                 glow = true
                             }
@@ -73,13 +49,14 @@ struct CameraARView: View {
                 }
                 Spacer()
             }
-
+            
             // Botão pra capturar
             VStack {
                 Spacer()
-
+                
                 Button(action: {
-                    arCoordinator.capturarNsect()
+                    // Aqui substituímos a ação direta de capturar pelo skill check
+                    showSkillCheck = true
                 }) {
                     Circle()
                         .fill(arCoordinator.canCapture ? Color.green : Color.gray.opacity(0.3))
@@ -96,7 +73,28 @@ struct CameraARView: View {
                 .disabled(!arCoordinator.canCapture)
                 .padding(.bottom, 40)
             }
+            
+            // Overlay do SkillCheck
+            if showSkillCheck {
+                Color.black.opacity(0.5)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                
+                SkillCheckView(
+                    isPresented: $showSkillCheck,
+                    onSuccess: {
+                        arCoordinator.capturarNsect()   // sucesso → captura inseto
+                    },
+                    onFail: {
+                        arCoordinator.mensagem = "Falhou na captura!"
+                    }
+                )
+                .frame(maxWidth: 300, maxHeight: 300)
+                .background(Color.black.opacity(0.6))
+                .cornerRadius(20)
+                .shadow(radius: 10)
+                .transition(.scale.combined(with: .opacity))
+            }
         }
     }
 }
-

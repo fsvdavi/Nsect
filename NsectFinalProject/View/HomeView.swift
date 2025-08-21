@@ -1,85 +1,111 @@
 import SwiftUI
 
 struct HomeView: View {
-    @Binding var selectedTab: AppTab
     let topBarHeight: CGFloat = 160
+    @State private var glow = false
 
     var body: some View {
-        ZStack(alignment: .top) {
-            Image("forestBackground")
-                .resizable()
-                .opacity(0.8)
-                .ignoresSafeArea()
+        NavigationStack {
+            ZStack(alignment: .top) {
+                Image("background")
+                    .resizable()
+                    .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                ZStack {
-                    Color(red: 0, green: 0.3, blue: 0)
-                        .mask(
-                            RoundedRectangle(cornerRadius: 50, style: .continuous)
-                                .padding(.top, -20)
-                        )
-
-                    Image("nsectTitle")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 90)
-                        .padding(.horizontal, 16)
-                        .padding(.top, 40)
-                }
-                .frame(height: topBarHeight)
-                .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-                .ignoresSafeArea(edges: .top)
-                .padding(.bottom, 10)
-
-                Spacer()
-                
-                HStack {
-                    Image("texthome")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 120)
-                        .padding(.horizontal, 6)
-                        .padding(.top, -50)
-                    Spacer()
-                }
-
-
-                Button {
-                    selectedTab = .inventory
-                } label: {
-                    ZStack {
-                        Image("brazilMap")
+                VStack(spacing: 0) {
+                    // Top Bar
+                    HStack {
+                        Image("nsectTitle")
                             .resizable()
                             .scaledToFit()
-                            .scaleEffect(1.35)
-                            .shadow(radius: 20)
-
-                        Image("backpack")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 150, height: 150)
-                            .opacity(0.2)
-                            .offset(x: 28, y: -30)
+                            .frame(height: 100)
+                            .padding(.leading, 8)
+                        
+                        Spacer()
+                        
+                        NavigationLink {
+                            ProfileView()
+                        } label: {
+                            Circle()
+                                .fill(Color.white.opacity(0.8))
+                                .frame(width: 80, height: 80)
+                                .overlay(
+                                    Circle().stroke(Color.black, lineWidth: 2)
+                                )
+                                .padding(.trailing, 24)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .padding(.top, -80)
+                    .frame(height: topBarHeight)
+                    .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                    .padding(.top, 10)
+
+                    Spacer()
+
+                    // Botões principais
+                    VStack(spacing: 20) {
+                        // Botão Explorar
+                        NavigationLink {
+                            CameraARView(arCoordinator: ARCoordinator())
+                        } label: {
+                            ButtonTemplate(imageName: "templatemadeira", icon: "magnifyingglass", text: "Explorar", glow: glow)
+                        }
+                        .buttonStyle(.plain)
+
+                        // Botão Inventário
+                        NavigationLink {
+                            InventoryInsectView(arCoordinator: ARCoordinator())
+                        } label: {
+                            ButtonTemplate(imageName: "templatemadeira", icon: "backpack.fill", text: "Inventário", glow: glow)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.bottom, 80)
                 }
-                .buttonStyle(.plain)
-
-
-                Spacer()
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 1).repeatForever(autoreverses: true)) {
+                        glow = true
+                    }
+                }
             }
         }
     }
 }
 
-#Preview {
-    struct HomeViewPreviewWrapper: View {
-        @State private var selectedTab: AppTab = .home
+// Componente reutilizável para os botões
+struct ButtonTemplate: View {
+    var imageName: String
+    var icon: String
+    var text: String
+    var glow: Bool
 
-        var body: some View {
-            HomeView(selectedTab: $selectedTab)
+    var body: some View {
+        ZStack {
+            Image(imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 320, height: 120)
+                .scaleEffect(x: 1.0, y: 0.7)
+                .cornerRadius(20)
+                .shadow(color: Color.green.opacity(glow ? 0.8 : 0.3), radius: glow ? 12 : 5)
+
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.system(size: 32))
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.6), radius: 2, x: 1, y: 1)
+
+                Text(text)
+                    .font(.custom("Avenir Next Heavy", size: 25))
+                    .foregroundStyle(
+                        LinearGradient(colors: [Color.white, Color.yellow], startPoint: .top, endPoint: .bottom)
+                    )
+                    .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
+            }
+            .padding(.leading, -10)
         }
     }
+}
 
-    return HomeViewPreviewWrapper()
+#Preview {
+    HomeView()
 }

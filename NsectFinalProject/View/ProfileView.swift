@@ -2,9 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     let topBarHeight: CGFloat = 360
-    @Binding var selectedTab: AppTab
-    @Binding var showCamera: Bool
-    @ObservedObject var coordinator: ARCoordinator
+    @StateObject private var coordinator = ARCoordinator() // Criado internamente
 
     struct RoundedCorners: Shape {
         var radius: CGFloat = 25.0
@@ -22,11 +20,8 @@ struct ProfileView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Image("forestBackground")
+            Image("background")
                 .resizable()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
-                .opacity(0.8)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -74,26 +69,11 @@ struct ProfileView: View {
                         ForEach(coordinator.conquistas.sorted { $0.isUnlocked && !$1.isUnlocked }) { achievement in
                             AchievementView(achievement: achievement)
                         }
-
                     }
                     .padding(.top, 10)
                     .padding(.bottom, 0)
                 }
             }
         }
-    }
-}
-
-#Preview {
-    ProfilePreviewWrapper()
-}
-
-private struct ProfilePreviewWrapper: View {
-    @State private var selectedTab: AppTab = .profile
-    @State private var showCamera: Bool = false
-    @StateObject private var fakeCoordinator = ARCoordinator()
-
-    var body: some View {
-        ProfileView(selectedTab: $selectedTab, showCamera: $showCamera, coordinator: fakeCoordinator)
     }
 }
