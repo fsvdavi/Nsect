@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ProfileView: View {
     let topBarHeight: CGFloat = 360
-    @Binding var selectedTab: AppTab
     @Binding var showCamera: Bool
     @ObservedObject var coordinator: ARCoordinator
 
@@ -22,11 +21,8 @@ struct ProfileView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Image("forestBackground")
+            Image("background")
                 .resizable()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
-                .opacity(0.8)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -84,16 +80,4 @@ struct ProfileView: View {
     }
 }
 
-#Preview {
-    ProfilePreviewWrapper()
-}
 
-private struct ProfilePreviewWrapper: View {
-    @State private var selectedTab: AppTab = .profile
-    @State private var showCamera: Bool = false
-    @StateObject private var fakeCoordinator = ARCoordinator()
-
-    var body: some View {
-        ProfileView(selectedTab: $selectedTab, showCamera: $showCamera, coordinator: fakeCoordinator)
-    }
-}

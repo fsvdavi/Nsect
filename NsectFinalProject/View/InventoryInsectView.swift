@@ -32,9 +32,8 @@ struct InventoryInsectView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                Image("forestBackground")
+                Image("background")
                     .resizable()
-                    .opacity(0.8)
                     .ignoresSafeArea()
 
                 VStack(spacing: 12) {
