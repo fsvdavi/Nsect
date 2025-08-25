@@ -3,7 +3,7 @@ import SwiftUI
 struct CameraARView: View {
     @ObservedObject var arCoordinator: ARCoordinator
     @State private var glow = false
-    @State private var showSkillCheck = false  // controla exibição do skill check
+    @State private var showSkillCheck = false  // exibi ou nao os kill check
     
     var body: some View {
         ZStack {
@@ -76,10 +76,6 @@ struct CameraARView: View {
             
             // Overlay do SkillCheck
             if showSkillCheck {
-                Color.black.opacity(0.5)
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-                
                 SkillCheckView(
                     isPresented: $showSkillCheck,
                     onSuccess: {
@@ -95,6 +91,8 @@ struct CameraARView: View {
                 .shadow(radius: 10)
                 .transition(.scale.combined(with: .opacity))
             }
+            
+            
         }
     }
 }

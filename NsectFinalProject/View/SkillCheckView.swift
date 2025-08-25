@@ -34,7 +34,7 @@ struct SkillCheckView: View {
                 ForEach(vm.zones.indices, id: \.self) { i in
                     let z = vm.zones[i]
                     Rectangle()
-                        .fill(.white.opacity(vm.remainingZones.contains(i) ? 0.6 : 0.2)) // zona já clicada fica fraca
+                        .fill(.green.opacity(vm.remainingZones.contains(i) ? 0.6 : 0.2)) // zona já clicada fica fraca
                         .frame(width: barWidth * z.width, height: 20)
                         .offset(x: barWidth * z.start)
                 }
