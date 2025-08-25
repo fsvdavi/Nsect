@@ -47,18 +47,29 @@ final class AudioManager: ObservableObject {
     }
 
     // MARK: - Play / Stop / Fade
-    func play(_ track: Track, fadeDuration: TimeInterval = 1.0, volume: Float = 0.8) {
+    func play(_ track: Track, fadeDuration: TimeInterval = 1.0, volume: Float? = nil) {
         DispatchQueue.main.async {
-            // 🚨 não reinicia se for a mesma trilha
             if self.currentTrack == track { return }
 
-            if let existing = self.player, existing.isPlaying {
-                self.crossfadeFromExisting(to: track, fadeDuration: fadeDuration, targetVolume: volume)
+            // Definindo volume padrão por track
+            let targetVolume: Float
+            if let volume = volume {
+                targetVolume = volume
             } else {
-                self.startPlayer(for: track, targetVolume: volume, fadeIn: fadeDuration)
+                switch track {
+                case .homeProfile: targetVolume = 0.5
+                case .inventoryDetail: targetVolume = 0.8
+                }
+            }
+
+            if let existing = self.player, existing.isPlaying {
+                self.crossfadeFromExisting(to: track, fadeDuration: fadeDuration, targetVolume: targetVolume)
+            } else {
+                self.startPlayer(for: track, targetVolume: targetVolume, fadeIn: fadeDuration)
             }
         }
     }
+
 
     func stop(fadeDuration: TimeInterval = 0.6) {
         DispatchQueue.main.async {
