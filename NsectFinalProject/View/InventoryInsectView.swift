@@ -213,20 +213,98 @@ struct InventoryInsectView: View {
     struct InventoryPreviewWrapper: View {
         @StateObject private var arCoordinator = ARCoordinator()
 
-        // dados de exemplo
+        // dados de exemplo com raridade
         private let exemploInsetos: [Artropode] = [
-            Artropode(classe: "Insecta", nomeCientifico: "Camponotus spp.", nomePopular: "Formiga Preta", habitat: "Ambientes urbanos e florestais", descricao: "Formiga comum no Brasil, constrói ninhos em madeira ou solo.", curiosidade: "Se comunicam por feromônios químicos complexos, funcionando como uma 'internet química'.", tamanho: "0.5 cm", peso: "0.005 g", imagemURL: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Camponotus_pennsylvanicus_ant.jpg", modelo3d: "ant", id: "01"),
-            Artropode(classe: "Insecta", nomeCientifico: "Coccinella septempunctata", nomePopular: "Joaninha", habitat: "Jardins e plantações", descricao: "Inseto colorido e convidativo, predador de pragas como pulgões.", curiosidade: "Quando ameaçada libera um fluido amarelo com cheiro forte para afastar predadores.", tamanho: "0.6 cm", peso: "0.006 g", imagemURL: "https://upload.wikimedia.org/wikipedia/commons/1/15/Coccinella_septempunctata_01.JPG", modelo3d: "Ladybug", id: "02"),
-            Artropode(classe: "Arachnida", nomeCientifico: "Phoneutria fera", nomePopular: "Aranha Armadeira", habitat: "Matas e áreas próximas ao solo", descricao: "Aranha de comportamento ativo e veneno potente.", curiosidade: "Seu veneno é poderoso, mas picadas humanas são tratadas com antídoto e cuidados médicos.", tamanho: "6 cm", peso: "2 g", imagemURL: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Phoneutria_nigriventer_%28aka%29.jpg", modelo3d: "spider", id: "03"),
-            Artropode(classe: "Insecta", nomeCientifico: "Tenodera aridifolia", nomePopular: "Louva-a-Deus", habitat: "Vegetação baixa e arbustos", descricao: "Predador paciente que usa suas patas dianteiras para agarrar presas.", curiosidade: "Algumas espécies apresentam camuflagem avançada.", tamanho: "7 cm", peso: "3 g", imagemURL: "https://upload.wikimedia.org/wikipedia/commons/9/99/Mantis2.jpg", modelo3d: "mantis", id: "04"),
-            Artropode(classe: "Arachnida", nomeCientifico: "Tityus serrulatus", nomePopular: "Escorpião Amarelo", habitat: "Áreas urbanas e entulhos", descricao: "Escorpião comum em áreas urbanas do Brasil.", curiosidade: "Pode sobreviver longos períodos sem alimento.", tamanho: "6 cm", peso: "5 g", imagemURL: "https://www.estado.rs.gov.br/upload/recortes/202501/29180411_2167371_GDO.jpeg", modelo3d: "Scorpion", id: "05"),
-            Artropode(classe: "Insecta", nomeCientifico: "Dynastes hercules", nomePopular: "Besouro-Hércules", habitat: "Florestas tropicais", descricao: "Um dos maiores besouros do mundo.", curiosidade: "Pode erguer objetos muito maiores que ele.", tamanho: "17 cm", peso: "100 g", imagemURL: "https://upload.wikimedia.org/wikipedia/commons/6/66/Dynastes_hercules_male_-_P%C3%A9rou.jpg", modelo3d: "besouro", id: "06")
+            Artropode(
+                classe: "Insecta",
+                nomeCientifico: "Camponotus spp.",
+                nomePopular: "Formiga Preta",
+                habitat: "Ambientes urbanos e florestais",
+                descricao: "Formiga comum no Brasil, constrói ninhos em madeira ou solo.",
+                curiosidade: "Se comunicam por feromônios químicos complexos, funcionando como uma 'internet química'.",
+                tamanho: "0.5 cm",
+                peso: "0.005 g",
+                imagemURL: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Camponotus_pennsylvanicus_ant.jpg",
+                modelo3d: "ant",
+                id: "01",
+                raridade: "Comum"
+            ),
+            Artropode(
+                classe: "Insecta",
+                nomeCientifico: "Coccinella septempunctata",
+                nomePopular: "Joaninha",
+                habitat: "Jardins e plantações",
+                descricao: "Inseto colorido e convidativo, predador de pragas como pulgões.",
+                curiosidade: "Quando ameaçada libera um fluido amarelo com cheiro forte para afastar predadores.",
+                tamanho: "0.6 cm",
+                peso: "0.006 g",
+                imagemURL: "https://upload.wikimedia.org/wikipedia/commons/1/15/Coccinella_septempunctata_01.JPG",
+                modelo3d: "Ladybug",
+                id: "02",
+                raridade: "Comum"
+            ),
+            Artropode(
+                classe: "Arachnida",
+                nomeCientifico: "Phoneutria fera",
+                nomePopular: "Aranha Armadeira",
+                habitat: "Matas e áreas próximas ao solo",
+                descricao: "Aranha de comportamento ativo e veneno potente.",
+                curiosidade: "Seu veneno é poderoso, mas picadas humanas são tratadas com antídoto e cuidados médicos.",
+                tamanho: "6 cm",
+                peso: "2 g",
+                imagemURL: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Phoneutria_nigriventer_%28aka%29.jpg",
+                modelo3d: "spider",
+                id: "03",
+                raridade: "Raro"
+            ),
+            Artropode(
+                classe: "Insecta",
+                nomeCientifico: "Tenodera aridifolia",
+                nomePopular: "Louva-a-Deus",
+                habitat: "Vegetação baixa e arbustos",
+                descricao: "Predador paciente que usa suas patas dianteiras para agarrar presas.",
+                curiosidade: "Algumas espécies apresentam camuflagem avançada.",
+                tamanho: "7 cm",
+                peso: "3 g",
+                imagemURL: "https://upload.wikimedia.org/wikipedia/commons/9/99/Mantis2.jpg",
+                modelo3d: "mantis",
+                id: "04",
+                raridade: "Épico"
+            ),
+            Artropode(
+                classe: "Arachnida",
+                nomeCientifico: "Tityus serrulatus",
+                nomePopular: "Escorpião Amarelo",
+                habitat: "Áreas urbanas e entulhos",
+                descricao: "Escorpião comum em áreas urbanas do Brasil.",
+                curiosidade: "Pode sobreviver longos períodos sem alimento.",
+                tamanho: "6 cm",
+                peso: "5 g",
+                imagemURL: "https://www.estado.rs.gov.br/upload/recortes/202501/29180411_2167371_GDO.jpeg",
+                modelo3d: "Scorpion",
+                id: "05",
+                raridade: "Épico"
+            ),
+            Artropode(
+                classe: "Insecta",
+                nomeCientifico: "Dynastes hercules",
+                nomePopular: "Besouro-Hércules",
+                habitat: "Florestas tropicais",
+                descricao: "Um dos maiores besouros do mundo.",
+                curiosidade: "Pode erguer objetos muito maiores que ele.",
+                tamanho: "17 cm",
+                peso: "100 g",
+                imagemURL: "https://upload.wikimedia.org/wikipedia/commons/6/66/Dynastes_hercules_male_-_P%C3%A9rou.jpg",
+                modelo3d: "besouro",
+                id: "06",
+                raridade: "Lendário"
+            )
         ]
 
         var body: some View {
             InventoryInsectView(arCoordinator: arCoordinator)
                 .onAppear {
-                    // popula somente se estiver vazio (evita sobrescrever durante hot-reload)
+                    // popula somente se estiver vazio
                     if arCoordinator.insetosCapturados.isEmpty {
                         arCoordinator.insetosCapturados = exemploInsetos
                     }
