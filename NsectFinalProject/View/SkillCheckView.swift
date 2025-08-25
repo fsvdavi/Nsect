@@ -5,6 +5,13 @@
 //  Created by found on 21/08/25.
 //
 
+//
+//  SkillCheckView.swift
+//  NsectFinalProject
+//
+//  Created by found on 21/08/25.
+//
+
 import SwiftUI
 
 struct SkillCheckView: View {
@@ -12,9 +19,8 @@ struct SkillCheckView: View {
     @Binding var isPresented: Bool
     var onSuccess: () -> Void
     var onFail: () -> Void
-    @State private var isPressed = false
-
     
+    // estado do ponteiro
     @State private var pointerX: CGFloat = 0
     @State private var direction: CGFloat = 1
     let barWidth: CGFloat = 250
@@ -24,8 +30,10 @@ struct SkillCheckView: View {
     var body: some View {
         VStack {
             Spacer().frame(height: 150)
+            
             Text("\(vm.currentStage)/\(vm.totalStages)")
             
+            // Barra + zonas
             ZStack(alignment: .leading) {
                 Rectangle()
                     .fill(.gray.opacity(0.3))
@@ -45,28 +53,26 @@ struct SkillCheckView: View {
                     .offset(x: pointerX)
             }
             
+            // 🔹 Botão de capturar(pega o mesmo da AR view)
             Button(action: {
                 let acerto = vm.checkHit(pointerX, barWidth: barWidth)
                 
                 if acerto && vm.remainingZones.isEmpty {
-                    // completou a etapa com sucesso
                     vm.hits += 1
                     endStage()
                 } else if !acerto {
-                    // erro → etapa falha imediatamente
                     endStage()
                 }
             }) {
-                ZStack {
-                    Circle()
-                        .fill(Color.gray)
-                        .frame(width: 80, height: 80)
-                        .shadow(color: .gray.opacity(0.5), radius: 5, x: 0, y: 5)
-                    
-                    Circle()
-                        .stroke(Color.white, lineWidth: 4)
-                        .frame(width: 50, height: 50)
-                }
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 80, height: 80)
+                    .shadow(color: .green.opacity(0.6), radius: 10)
+                    .overlay(
+                        Image(systemName: "scope")
+                            .foregroundColor(.white)
+                            .font(.system(size: 30))
+                    )
             }
             .padding(.top, 80)
         }
@@ -104,7 +110,6 @@ struct SkillCheckView: View {
         timer = Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true) { _ in
             pointerX += speed * direction
             if pointerX <= 0 || pointerX >= barWidth {
-                // se o ponteiro atravessar a barra → etapa falha
                 vm.stageFailed = true
                 endStage()
             }
@@ -114,7 +119,6 @@ struct SkillCheckView: View {
         }
     }
 }
-
 
 struct SkillCheckView_Previews: PreviewProvider {
     struct PreviewWrapper: View {

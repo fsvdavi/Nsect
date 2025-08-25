@@ -3,7 +3,7 @@ import SwiftUI
 struct CameraARView: View {
     @ObservedObject var arCoordinator: ARCoordinator
     @State private var glow = false
-    @State private var showSkillCheck = false  // exibi ou nao os kill check
+    @State private var showSkillCheck = false  // controla se exibe o skill check
     
     var body: some View {
         ZStack {
@@ -50,12 +50,11 @@ struct CameraARView: View {
                 Spacer()
             }
             
-            // Botão pra capturar
+            // Botão de captura (aciona o skill check)
             VStack {
                 Spacer()
                 
                 Button(action: {
-                    // Aqui substituímos a ação direta de capturar pelo skill check
                     showSkillCheck = true
                 }) {
                     Circle()
@@ -91,8 +90,6 @@ struct CameraARView: View {
                 .shadow(radius: 10)
                 .transition(.scale.combined(with: .opacity))
             }
-            
-            
         }
     }
 }
