@@ -20,10 +20,9 @@ class ARCoordinator: NSObject, ObservableObject {
     @Published var insetosCapturados: [Artropode] = []
     var artropodeAtual: Artropode?
 
-    @Published var showConfetti = false
     @Published var canCapture = false
     @Published var mensagem: String? = nil
-    
+
     @Published var conquistas: [Achievement] = [
         Achievement(title: "Mestre dos Insetos", description: "Capture todos os artrópodes disponíveis", isUnlocked: false),
         Achievement(title: "Explorador Iniciante", description: "Capture seu primeiro inseto", isUnlocked: false),
@@ -33,12 +32,9 @@ class ARCoordinator: NSObject, ObservableObject {
 
     private var timerCheckCapture: Timer?
     private var timerLoadInseto: Timer?
-    
-    // MARK: - Cena AR
-    
-    func configurarCenaAR() -> ARView {
-        print("🔄 Configurando ARView e resetando estado")
 
+    // MARK: - Configuração da Cena AR
+    func configurarCenaAR() -> ARView {
         self.boxEntity = nil
         self.arView = nil
         self.artropodeAtual = nil
@@ -56,17 +52,18 @@ class ARCoordinator: NSObject, ObservableObject {
 
         carregarInsetoAleatorio(anchor: anchor)
 
-        timerCheckCapture?.invalidate()
-        timerLoadInseto?.invalidate()
-
-        timerCheckCapture = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            self?.verificarSePodeCapturar()
+        if timerCheckCapture == nil {
+            timerCheckCapture = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+                self?.verificarSePodeCapturar()
+            }
         }
 
-        timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            if self.boxEntity == nil {
-                self.carregarInsetoAleatorio(anchor: anchor)
+        if timerLoadInseto == nil {
+            timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+                guard let self = self else { return }
+                if self.boxEntity == nil {
+                    self.carregarInsetoAleatorio(anchor: anchor)
+                }
             }
         }
 
@@ -74,11 +71,8 @@ class ARCoordinator: NSObject, ObservableObject {
     }
 
     func verificarSePodeCapturar() {
-        guard let arView = arView,
-              let boxEntity = boxEntity else {
-            DispatchQueue.main.async {
-                self.canCapture = false
-            }
+        guard let arView = arView, let boxEntity = boxEntity else {
+            DispatchQueue.main.async { self.canCapture = false }
             return
         }
 
@@ -86,119 +80,71 @@ class ARCoordinator: NSObject, ObservableObject {
         let results = arView.raycast(from: center, allowing: .estimatedPlane, alignment: .horizontal)
 
         if let firstResult = results.first {
-            let raycastPosition = SIMD3<Float>(
+            let raycastPos = SIMD3<Float>(
                 firstResult.worldTransform.columns.3.x,
                 firstResult.worldTransform.columns.3.y,
                 firstResult.worldTransform.columns.3.z
             )
-
-            let distance = distance(boxEntity.position(relativeTo: nil), raycastPosition)
-
-            DispatchQueue.main.async {
-                self.canCapture = distance < 0.2
-            }
+            let dist = distance(boxEntity.position(relativeTo: nil), raycastPos)
+            DispatchQueue.main.async { self.canCapture = dist < 0.2 }
         } else {
-            DispatchQueue.main.async {
-                self.canCapture = false
-            }
+            DispatchQueue.main.async { self.canCapture = false }
         }
     }
 
     func carregarInsetoAleatorio(anchor: AnchorEntity) {
-        guard boxEntity == nil else {
-            return
-        }
+        guard boxEntity == nil else { return }
 
         let artropodesComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }
-        guard let artropode = artropodesComModelo.randomElement() else {
-            print("❌ Nenhum artropode com modelo3d válido.")
-            return
-        }
+        guard let artropode = artropodesComModelo.randomElement() else { return }
         artropodeAtual = artropode
 
         do {
             let entity = try ModelEntity.loadModel(named: artropode.modelo3d)
             entity.scale = insetoEscalas[artropode.modelo3d] ?? SIMD3<Float>(0.05, 0.05, 0.05)
-
             if artropode.modelo3d == "mantis" {
                 entity.transform.rotation = simd_quatf(angle: .pi, axis: [0, 1, 0])
             }
 
             self.boxEntity = entity
-            let randomX = Float.random(in: -0.2...0.2)
-            let randomZ = Float.random(in: -0.2...0.2)
-            entity.position = SIMD3<Float>(randomX, 0, randomZ)
+            entity.position = SIMD3<Float>(Float.random(in: -0.2...0.2), 0, Float.random(in: -0.2...0.2))
             anchor.addChild(entity)
 
             DispatchQueue.main.async {
                 self.mensagem = "Inseto encontrado!"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    self.mensagem = nil
-                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
             }
-
-            print("Inseto carregado: \(artropode.nomePopular)")
         } catch {
-            print("❌ Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
+            print("Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
         }
     }
 
+    // MARK: - Captura
     func capturarNsect() {
-        guard let arView = arView,
-              let boxEntity = boxEntity,
-              let artropode = artropodeAtual else { return }
+        guard let artropode = artropodeAtual else { return }
 
-        let center = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
-        let results = arView.raycast(from: center, allowing: .estimatedPlane, alignment: .horizontal)
+        // Remove o modelo 3D da cena
+        DispatchQueue.main.async {
+            self.boxEntity?.removeFromParent()
+            self.boxEntity = nil
+            self.artropodeAtual = nil
 
-        if let firstResult = results.first {
-            let raycastPosition = SIMD3<Float>(
-                firstResult.worldTransform.columns.3.x,
-                firstResult.worldTransform.columns.3.y,
-                firstResult.worldTransform.columns.3.z
-            )
-
-            let distance = distance(boxEntity.position(relativeTo: nil), raycastPosition)
-
-            if distance < 0.2 {
-                let transform = Transform(
-                    scale: SIMD3<Float>(repeating: 0.0),
-                    rotation: boxEntity.transform.rotation,
-                    translation: boxEntity.transform.translation
-                )
-
-                boxEntity.move(to: transform, relativeTo: boxEntity.parent, duration: 0.8, timingFunction: .easeInOut)
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                    self.boxEntity?.removeFromParent()
-                    self.boxEntity = nil
-                    self.artropodeAtual = nil
-
-                    if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
-                        if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
-                            self.artropodesDisponiveis[index].foiCapturado = true
-                            self.insetosCapturados.append(self.artropodesDisponiveis[index])
-                        } else {
-                            let novo = artropode
-                            novo.foiCapturado = true
-                            self.insetosCapturados.append(novo)
-                        }
-
-                        self.salvarInventario()
-                        self.atualizarConquistas()
-                    }
-
-
-                    print("✅ Capturado: \(artropode.nomePopular)")
+            // Atualiza inventário
+            if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
+                if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
+                    self.artropodesDisponiveis[index].foiCapturado = true
+                    self.insetosCapturados.append(self.artropodesDisponiveis[index])
+                } else {
+                    var novo = artropode
+                    novo.foiCapturado = true
+                    self.insetosCapturados.append(novo)
                 }
-
-                DispatchQueue.main.async {
-                    self.mensagem = "Inseto descoberto!"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        self.mensagem = nil
-                    }
-                }
+                self.salvarInventario()
+                self.atualizarConquistas()
             }
+
+            self.mensagem = "Inseto capturado!"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
         }
     }
 
@@ -206,11 +152,10 @@ class ARCoordinator: NSObject, ObservableObject {
         timerCheckCapture?.invalidate()
         timerLoadInseto?.invalidate()
     }
-    // MARK: - Salvamento e Carregamento de Inventário
 
+    // MARK: - Inventário
     private var caminhoInventario: URL {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("insetosCapturados.json")
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("insetosCapturados.json")
     }
 
     func salvarInventario() {
@@ -218,7 +163,6 @@ class ARCoordinator: NSObject, ObservableObject {
         do {
             let dados = try JSONEncoder().encode(ids)
             try dados.write(to: caminhoInventario)
-            print("Inventário salvo.")
         } catch {
             print("Erro ao salvar inventário: \(error)")
         }
@@ -228,53 +172,34 @@ class ARCoordinator: NSObject, ObservableObject {
         do {
             let dados = try Data(contentsOf: caminhoInventario)
             let ids = try JSONDecoder().decode([ArtropodeSalvo].self, from: dados)
-            let capturados = artropodesDisponiveis.filter { art in
-                ids.contains(where: { $0.id == art.id })
-            }
-
-            for art in capturados {
-                art.foiCapturado = true
-            }
+            let capturados = artropodesDisponiveis.filter { art in ids.contains(where: { $0.id == art.id }) }
+            for art in capturados { art.foiCapturado = true }
             insetosCapturados = capturados
-
-            print("Inventário carregado.")
         } catch {
             print("Nenhum inventário salvo ou erro ao carregar: \(error)")
         }
     }
-    
-    // MARK: - Salvamento e Carregamento de Conquistas
 
+    // MARK: - Conquistas
     private var caminhoConquistas: URL {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("conquistas.json")
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("conquistas.json")
     }
-    
+
     func atualizarConquistas() {
-        if insetosCapturados.count >= 1 {
-            desbloquearConquista(titulo: "Explorador Iniciante")
-        }
+        if insetosCapturados.count >= 1 { desbloquearConquista(titulo: "Explorador Iniciante") }
 
         let totalComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }.count
-        if insetosCapturados.count == totalComModelo {
-            desbloquearConquista(titulo: "Mestre dos Insetos")
-        }
+        if insetosCapturados.count == totalComModelo { desbloquearConquista(titulo: "Mestre dos Insetos") }
 
-        let todosCapturados = artropodesDisponiveis.filter { $0.foiCapturado }.count
-        if todosCapturados == artropodesDisponiveis.count {
-            desbloquearConquista(titulo: "Entomologista Sênior")
-        }
+        if artropodesDisponiveis.allSatisfy({ $0.foiCapturado }) { desbloquearConquista(titulo: "Entomologista Sênior") }
 
         let horaAtual = Calendar.current.component(.hour, from: Date())
-        if horaAtual >= 18 || horaAtual <= 6 {
-            desbloquearConquista(titulo: "Caçador Noturno")
-        }
+        if horaAtual >= 18 || horaAtual <= 6 { desbloquearConquista(titulo: "Caçador Noturno") }
     }
-    
+
     func desbloquearConquista(titulo: String) {
         if let index = conquistas.firstIndex(where: { $0.title == titulo && !$0.isUnlocked }) {
             conquistas[index].isUnlocked = true
-            print("🏆 Conquista desbloqueada: \(titulo)")
             salvarConquistas()
         }
     }
@@ -284,33 +209,26 @@ class ARCoordinator: NSObject, ObservableObject {
         do {
             let dados = try JSONEncoder().encode(conquistasSalvas)
             try dados.write(to: caminhoConquistas)
-            print("🏅 Conquistas salvas.")
-        } catch {
-            print("❌ Erro ao salvar conquistas: \(error)")
-        }
+        } catch { print("Erro ao salvar conquistas: \(error)") }
     }
 
     func carregarConquistas() {
         do {
             let dados = try Data(contentsOf: caminhoConquistas)
             let conquistasSalvas = try JSONDecoder().decode([AchievementSalvo].self, from: dados)
-
-            for conquistaSalva in conquistasSalvas {
-                if let index = conquistas.firstIndex(where: { $0.title == conquistaSalva.title }) {
-                    conquistas[index].isUnlocked = conquistaSalva.isUnlocked
+            for cs in conquistasSalvas {
+                if let index = conquistas.firstIndex(where: { $0.title == cs.title }) {
+                    conquistas[index].isUnlocked = cs.isUnlocked
                 }
             }
-
-            print("📥 Conquistas carregadas.")
         } catch {
-            print("⚠️ Nenhuma conquista salva ou erro ao carregar: \(error)")
+            print("Nenhuma conquista salva ou erro ao carregar: \(error)")
         }
     }
-    
+
     override init() {
         super.init()
         carregarInventario()
         carregarConquistas()
     }
-    
 }
