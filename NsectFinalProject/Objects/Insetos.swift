@@ -15,6 +15,7 @@ class Artropode {
     var modelo3d: String
     var id: String
     var foiCapturado: Bool = false
+    var raridade: String
 
     init(
         classe: String,
@@ -27,7 +28,8 @@ class Artropode {
         peso: String,
         imagemURL: String,
         modelo3d: String,
-        id: String
+        id: String,
+        raridade: String
     ) {
         self.classe = classe
         self.nomeCientifico = nomeCientifico
@@ -41,6 +43,7 @@ class Artropode {
         self.modelo3d = modelo3d
         self.id = id
         self.foiCapturado = false
+        self.raridade = raridade
     }
 }
 
@@ -112,7 +115,8 @@ func carregarArtropodes() -> [Artropode] {
                 peso: col[7],
                 imagemURL: col[8],
                 modelo3d: col[9],
-                id: col[10]
+                id: col[10],
+                raridade: col[11]
             )
             lista.append(art)
         }
