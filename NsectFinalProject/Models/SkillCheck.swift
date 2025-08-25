@@ -13,7 +13,6 @@ class SkillCheckViewModel: ObservableObject {
     @Published var hits = 0
     @Published var zones: [(start: CGFloat, width: CGFloat)] = []
     
-    // NOVO: zonas restantes a serem clicadas na etapa
     @Published var remainingZones: Set<Int> = []
     @Published var stageFailed = false
     
@@ -25,7 +24,6 @@ class SkillCheckViewModel: ObservableObject {
         
         if Bool.random() {
             let s2 = CGFloat.random(in: 0.15...(0.75 - width))
-            
             let primeira = zones[0]
             let fimPrimeira = primeira.0 + primeira.1
             let fimSegunda = s2 + width
@@ -35,12 +33,10 @@ class SkillCheckViewModel: ObservableObject {
             }
         }
         
-        // registra zonas que ainda precisam ser clicadas
         remainingZones = Set(0..<zones.count)
         stageFailed = false
     }
     
-    /// Retorna se acertou uma zona
     func checkHit(_ pointerX: CGFloat, barWidth: CGFloat) -> Bool {
         for (i, z) in zones.enumerated() where remainingZones.contains(i) {
             let minX = barWidth * z.start
@@ -50,7 +46,7 @@ class SkillCheckViewModel: ObservableObject {
                 return true
             }
         }
-        stageFailed = true // clicou fora
+        stageFailed = true
         return false
     }
     
