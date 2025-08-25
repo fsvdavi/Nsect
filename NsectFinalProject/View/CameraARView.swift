@@ -3,15 +3,16 @@ import SwiftUI
 struct CameraARView: View {
     @ObservedObject var arCoordinator: ARCoordinator
     @State private var glow = false
-    @State private var showSkillCheck = false  // controla se exibe o skill check
-    
+    @State private var showSkillCheck = false
+    @State private var skillTapToken = UUID()   // token de clique para o SkillCheck
+
     var body: some View {
         ZStack {
             // Câmera
             ARViewContainerWrapper(coordinator: arCoordinator)
                 .edgesIgnoringSafeArea(.all)
-            
-            // Mensagem de captura
+
+            // Mensagem
             VStack {
                 if let mensagem = arCoordinator.mensagem {
                     Text(mensagem)
@@ -43,52 +44,51 @@ struct CameraARView: View {
                                 glow = true
                             }
                         }
-                        .onDisappear {
-                            glow = false
-                        }
+                        .onDisappear { glow = false }
                 }
                 Spacer()
             }
-            
-            // Botão de captura (aciona o skill check)
+
+            // ⬇️ SkillCheck transparente (vem ANTES do botão para ficar por trás dele)
+            if showSkillCheck {
+                SkillCheckView(
+                    isPresented: $showSkillCheck,
+                    onSuccess: { arCoordinator.capturarNsect() },
+                    onFail: { arCoordinator.mensagem = "Falhou na captura!" },
+                    externalTapToken: $skillTapToken
+                )
+                // Sem background, sem frame fixo → nada de quadrado preto
+            }
+
+            // Botão de capturar (o MESMO de sempre)
             VStack {
                 Spacer()
-                
                 Button(action: {
-                    showSkillCheck = true
+                    if showSkillCheck {
+                        // Estamos no mini-jogo → encaminha o clique
+                        skillTapToken = UUID()
+                    } else {
+                        // Abre o mini-jogo
+                        if arCoordinator.canCapture {
+                            showSkillCheck = true
+                        }
+                    }
                 }) {
                     Circle()
-                        .fill(arCoordinator.canCapture ? Color.green : Color.gray.opacity(0.3))
+                        .fill(Color.green) // mantém verde durante o skill
                         .frame(width: 80, height: 80)
-                        .shadow(color: arCoordinator.canCapture ? .green : .clear, radius: 10)
+                        .shadow(color: .green, radius: 10)
                         .overlay(
                             Image(systemName: "scope")
                                 .foregroundColor(.white)
                                 .font(.system(size: 30))
                         )
-                        .scaleEffect(arCoordinator.canCapture ? 1.1 : 1.0)
-                        .animation(.easeInOut(duration: 0.3), value: arCoordinator.canCapture)
+                        .scaleEffect(arCoordinator.canCapture || showSkillCheck ? 1.1 : 1.0)
+                        .animation(.easeInOut(duration: 0.3), value: arCoordinator.canCapture || showSkillCheck)
                 }
-                .disabled(!arCoordinator.canCapture)
+                // Durante o skill, o botão precisa ficar ATIVO mesmo que canCapture seja false
+                .disabled(!arCoordinator.canCapture && !showSkillCheck)
                 .padding(.bottom, 40)
-            }
-            
-            // Overlay do SkillCheck
-            if showSkillCheck {
-                SkillCheckView(
-                    isPresented: $showSkillCheck,
-                    onSuccess: {
-                        arCoordinator.capturarNsect()   // sucesso → captura inseto
-                    },
-                    onFail: {
-                        arCoordinator.mensagem = "Falhou na captura!"
-                    }
-                )
-                .frame(maxWidth: 300, maxHeight: 300)
-                .background(Color.black.opacity(0.6))
-                .cornerRadius(20)
-                .shadow(radius: 10)
-                .transition(.scale.combined(with: .opacity))
             }
         }
     }
