@@ -6,6 +6,10 @@ struct CameraARView: View {
     @State private var showSkillCheck = false
     @State private var skillTapToken = UUID()
 
+    private var captureButtonFill: Color {
+        (arCoordinator.canCapture || showSkillCheck) ? .green : .gray.opacity(0.55)
+    }
+
     var body: some View {
         ZStack {
             // Câmera
@@ -40,16 +44,14 @@ struct CameraARView: View {
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .animation(.easeInOut(duration: 0.3), value: arCoordinator.mensagem)
                         .onAppear {
-                            withAnimation(.easeInOut(duration: 1).repeatForever(autoreverses: true)) {
-                                glow = true
-                            }
+                            withAnimation(.easeInOut(duration: 1).repeatForever(autoreverses: true)) { glow = true }
                         }
                         .onDisappear { glow = false }
                 }
                 Spacer()
             }
 
-            // SkillCheck transparente
+            // SkillCheck 100% transparente, sem capturar toques (só o botão funciona)
             if showSkillCheck {
                 SkillCheckView(
                     isPresented: $showSkillCheck,
@@ -57,24 +59,25 @@ struct CameraARView: View {
                     onFail: { arCoordinator.mensagem = "Falhou na captura!" },
                     externalTapToken: $skillTapToken
                 )
+                .allowsHitTesting(false)
             }
 
-            // Botão de capturar
+            // Botão de capturar (o MESMO de sempre)
             VStack {
                 Spacer()
                 Button(action: {
                     if showSkillCheck {
-                        skillTapToken = UUID() // passa o clique para o SkillCheck
-                    } else {
-                        if arCoordinator.canCapture {
-                            showSkillCheck = true
-                        }
+                        // clique dentro do mini-game
+                        skillTapToken = UUID()
+                    } else if arCoordinator.canCapture {
+                        // abre o mini-game
+                        showSkillCheck = true
                     }
                 }) {
                     Circle()
-                        .fill(Color.green)
+                        .fill(captureButtonFill)
                         .frame(width: 80, height: 80)
-                        .shadow(color: .green, radius: 10)
+                        .shadow(color: (arCoordinator.canCapture || showSkillCheck) ? .green : .black.opacity(0.2), radius: 10)
                         .overlay(
                             Image(systemName: "scope")
                                 .foregroundColor(.white)
@@ -83,6 +86,7 @@ struct CameraARView: View {
                         .scaleEffect(arCoordinator.canCapture || showSkillCheck ? 1.1 : 1.0)
                         .animation(.easeInOut(duration: 0.3), value: arCoordinator.canCapture || showSkillCheck)
                 }
+                // Durante o skill o botão continua habilitado
                 .disabled(!arCoordinator.canCapture && !showSkillCheck)
                 .padding(.bottom, 40)
             }
