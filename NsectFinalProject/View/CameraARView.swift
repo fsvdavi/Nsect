@@ -1,10 +1,12 @@
 import SwiftUI
+import RealityKit
 
 struct CameraARView: View {
     @ObservedObject var arCoordinator: ARCoordinator
     @State private var glow = false
     @State private var showSkillCheck = false
     @State private var skillTapToken = UUID()
+    @StateObject private var skillVM = SkillCheckViewModel()
 
     private var captureButtonFill: Color {
         (arCoordinator.canCapture || showSkillCheck) ? .green : .gray.opacity(0.55)
@@ -12,11 +14,11 @@ struct CameraARView: View {
 
     var body: some View {
         ZStack {
-            // Câmera
+            // ARView
             ARViewContainerWrapper(coordinator: arCoordinator)
                 .edgesIgnoringSafeArea(.all)
 
-            // Mensagem
+            // Mensagem flutuante
             VStack {
                 if let mensagem = arCoordinator.mensagem {
                     Text(mensagem)
@@ -34,7 +36,6 @@ struct CameraARView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.green, lineWidth: 2)
-                                .shadow(color: Color.green.opacity(0.7), radius: 8)
                         )
                         .foregroundColor(.white)
                         .font(.system(size: 20, weight: .bold, design: .rounded))
@@ -51,27 +52,36 @@ struct CameraARView: View {
                 Spacer()
             }
 
-            // SkillCheck 100% transparente, sem capturar toques (só o botão funciona)
+            // SkillCheck
             if showSkillCheck {
                 SkillCheckView(
+                    vm: skillVM,
                     isPresented: $showSkillCheck,
-                    onSuccess: { arCoordinator.capturarNsect() },
-                    onFail: { arCoordinator.mensagem = "Falhou na captura!" },
+                    onSuccess: {
+                        arCoordinator.capturarNsect()
+                    },
+                    onFail: {
+                        arCoordinator.mensagem = "Falhou na captura!"
+                        // Remove o inseto da cena
+                        arCoordinator.boxEntity?.removeFromParent()
+                        arCoordinator.boxEntity = nil
+                        arCoordinator.artropodeAtual = nil
+                    },
                     externalTapToken: $skillTapToken
                 )
                 .allowsHitTesting(false)
             }
 
-            // Botão de capturar (o MESMO de sempre)
+            // Botão de captura
             VStack {
                 Spacer()
                 Button(action: {
                     if showSkillCheck {
-                        // clique dentro do mini-game
-                        skillTapToken = UUID()
+                        skillTapToken = UUID() // registrou o toque na SkillCheck
                     } else if arCoordinator.canCapture {
-                        // abre o mini-game
                         showSkillCheck = true
+                        skillVM.currentStage = 1
+                        skillVM.hits = 0
                     }
                 }) {
                     Circle()
@@ -86,7 +96,6 @@ struct CameraARView: View {
                         .scaleEffect(arCoordinator.canCapture || showSkillCheck ? 1.1 : 1.0)
                         .animation(.easeInOut(duration: 0.3), value: arCoordinator.canCapture || showSkillCheck)
                 }
-                // Durante o skill o botão continua habilitado
                 .disabled(!arCoordinator.canCapture && !showSkillCheck)
                 .padding(.bottom, 40)
             }
