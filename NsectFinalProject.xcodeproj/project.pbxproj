@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		2234E4F42E26E1F40062D6A9 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F32E26E1F40062D6A9 /* Shimmer */; };
 		2234E4F72E26E2400062D6A9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F62E26E2400062D6A9 /* SDWebImageSwiftUI */; };
-		2280A5712E2FF9AA009B7579 /* Catálogo.csv in Resources */ = {isa = PBXBuildFile; fileRef = 2280A5702E2FF9AA009B7579 /* Catálogo.csv */; };
+		2286F9FD2E5CD8180071FE12 /* Catálogo.csv in Resources */ = {isa = PBXBuildFile; fileRef = 2286F9FC2E5CD8180071FE12 /* Catálogo.csv */; };
 		22A2E32A2E57A5B200B5DCCD /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A2E3292E57A5B200B5DCCD /* AudioManager.swift */; };
 		22A2E32C2E57A60300B5DCCD /* BackgroundMusicModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A2E32B2E57A60300B5DCCD /* BackgroundMusicModifier.swift */; };
 		22A2E3322E57A77900B5DCCD /* homeProfile.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22A2E3312E57A77900B5DCCD /* homeProfile.mp3 */; };
@@ -18,7 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2280A5702E2FF9AA009B7579 /* Catálogo.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Catálogo.csv"; sourceTree = "<group>"; };
+		2286F9FC2E5CD8180071FE12 /* Catálogo.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Catálogo.csv"; sourceTree = "<group>"; };
 		229F9CE92E18673600619C20 /* NsectFinalProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NsectFinalProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22A2E3292E57A5B200B5DCCD /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		22A2E32B2E57A60300B5DCCD /* BackgroundMusicModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundMusicModifier.swift; sourceTree = "<group>"; };
@@ -68,9 +68,9 @@
 				22A2E3312E57A77900B5DCCD /* homeProfile.mp3 */,
 				22A2E3332E57A78200B5DCCD /* inventoryInsect.mp3 */,
 				22A2E3292E57A5B200B5DCCD /* AudioManager.swift */,
-				2280A5702E2FF9AA009B7579 /* Catálogo.csv */,
 				229F9CEB2E18673600619C20 /* NsectFinalProject */,
 				229F9CEA2E18673600619C20 /* Products */,
+				2286F9FC2E5CD8180071FE12 /* Catálogo.csv */,
 			);
 			sourceTree = "<group>";
 		};
@@ -154,7 +154,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2280A5712E2FF9AA009B7579 /* Catálogo.csv in Resources */,
+				2286F9FD2E5CD8180071FE12 /* Catálogo.csv in Resources */,
 				22A2E3342E57A78200B5DCCD /* inventoryInsect.mp3 in Resources */,
 				22A2E3322E57A77900B5DCCD /* homeProfile.mp3 in Resources */,
 			);

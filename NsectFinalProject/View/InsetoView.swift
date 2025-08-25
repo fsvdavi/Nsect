@@ -402,8 +402,8 @@ func infoColumn(title: String, value: String) -> some View {
         static var previews: some View {
             let artrópodes = carregarArtropodes()
             
-            if artrópodes.indices.contains(4) {
-                InsetoDetailView(artropode: artrópodes[4])
+            if artrópodes.indices.contains(10) {
+                InsetoDetailView(artropode: artrópodes[10])
             } else {
                 Text("Nenhum inseto disponível")
             }
