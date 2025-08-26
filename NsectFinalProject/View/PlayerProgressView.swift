@@ -1,18 +1,7 @@
 import SwiftUI
 
-// Mock para preview
-final class PlayerProgressMock: ObservableObject {
-    @Published var level: Int = 5
-    @Published var xp: Int = 120
-    @Published var unlockedRarities: [PlayerProgress.Rarity] = [.comum, .raro, .epico]
-
-    func xpRequired(forLevel level: Int) -> Int {
-        return 200
-    }
-}
-
 struct PlayerProgressView: View {
-    @ObservedObject var progress: PlayerProgressMock
+    @ObservedObject var progress: PlayerProgress 
 
     var body: some View {
         VStack(spacing: 16) {
@@ -59,10 +48,11 @@ struct PlayerProgressView: View {
     }
 }
 
-// Preview usando o mock
+// Preview com PlayerProgress real ou mock
 struct PlayerProgressView_Previews: PreviewProvider {
     static var previews: some View {
-        PlayerProgressView(progress: PlayerProgressMock())
+        let progress = PlayerProgress(level: 5, xp: 120)
+        PlayerProgressView(progress: progress)
             .previewLayout(.sizeThatFits)
             .padding()
             .background(Color.gray.opacity(0.2))

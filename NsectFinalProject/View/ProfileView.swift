@@ -3,7 +3,7 @@ import SwiftUI
 struct ProfileView: View {
     let topBarHeight: CGFloat = 360
     @StateObject private var coordinator = ARCoordinator()
-    @StateObject private var playerProgress = PlayerProgressMock() // Substitua pelo seu PlayerProgress real
+    @StateObject private var playerProgress = PlayerProgress.loadOrCreate()
 
     struct RoundedCorners: Shape {
         var radius: CGFloat = 25.0
@@ -73,12 +73,11 @@ struct ProfileView: View {
                             .fontWeight(.bold)
                             .foregroundColor(.white)
                             .padding(.horizontal)
-                            // Borda preta mais fina
-                            .shadow(color: .black, radius: 0.5, x: 0.5, y: 0.5)
-                            .shadow(color: .black, radius: 0.5, x: -0.5, y: -0.5)
-                            .shadow(color: .black, radius: 0.5, x: 0.5, y: -0.5)
-                            .shadow(color: .black, radius: 0.5, x: -0.5, y: 0.5)
-
+                            // Borda preta simulada com sombras
+                            .shadow(color: .black, radius: 0.1, x: 0.1, y: 0.1)
+                            .shadow(color: .black, radius: 0.1, x: -0.1, y: -0.1)
+                            .shadow(color: .black, radius: 0.1, x: 0.1, y: -0.1)
+                            .shadow(color: .black, radius: 0.1, x: -0.1, y: 0.1)
 
 
 
