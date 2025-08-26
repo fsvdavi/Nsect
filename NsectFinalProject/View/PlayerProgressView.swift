@@ -1,15 +1,18 @@
-//
-//  PlayerProgressView.swift
-//  NsectFinalProject
-//
-//  Created by found on 26/08/25.
-//
-
-
 import SwiftUI
 
+// Mock para preview
+final class PlayerProgressMock: ObservableObject {
+    @Published var level: Int = 5
+    @Published var xp: Int = 120
+    @Published var unlockedRarities: [PlayerProgress.Rarity] = [.comum, .raro, .epico]
+
+    func xpRequired(forLevel level: Int) -> Int {
+        return 200
+    }
+}
+
 struct PlayerProgressView: View {
-    @ObservedObject var progress: PlayerProgress
+    @ObservedObject var progress: PlayerProgressMock
 
     var body: some View {
         VStack(spacing: 16) {
@@ -49,9 +52,19 @@ struct PlayerProgressView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white)
+                .fill(Color.white.opacity(0.8))
                 .shadow(radius: 5)
         )
         .padding()
+    }
+}
+
+// Preview usando o mock
+struct PlayerProgressView_Previews: PreviewProvider {
+    static var previews: some View {
+        PlayerProgressView(progress: PlayerProgressMock())
+            .previewLayout(.sizeThatFits)
+            .padding()
+            .background(Color.gray.opacity(0.2))
     }
 }

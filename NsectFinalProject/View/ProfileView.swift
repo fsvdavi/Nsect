@@ -2,7 +2,8 @@ import SwiftUI
 
 struct ProfileView: View {
     let topBarHeight: CGFloat = 360
-    @StateObject private var coordinator = ARCoordinator() // Criado internamente
+    @StateObject private var coordinator = ARCoordinator()
+    @StateObject private var playerProgress = PlayerProgressMock() // Substitua pelo seu PlayerProgress real
 
     struct RoundedCorners: Shape {
         var radius: CGFloat = 25.0
@@ -24,7 +25,8 @@ struct ProfileView: View {
                 .resizable()
                 .ignoresSafeArea()
 
-            VStack(spacing: 0) {
+            VStack(spacing: -60) {
+                // Top Bar Verde Fixo
                 ZStack {
                     Rectangle()
                         .fill(Color(red: 0, green: 0.3, blue: 0))
@@ -50,31 +52,55 @@ struct ProfileView: View {
                             .font(.system(size: 18))
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                            .padding(.top, 34)
-
-                        Text("Conquistas")
-                            .font(.system(size: 32))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white.opacity(0.9))
+                            .padding(.top, 16)
                     }
                     .padding(.top, 40)
                 }
                 .frame(height: topBarHeight)
                 .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                 .ignoresSafeArea(edges: .top)
-                .padding(.bottom, -10)
 
+                // Conteúdo Scrollable
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(coordinator.conquistas.sorted { $0.isUnlocked && !$1.isUnlocked }) { achievement in
-                            AchievementView(achievement: achievement)
+                        // Player Progress
+                        PlayerProgressView(progress: playerProgress)
+                            .padding(.horizontal)
+
+                        // Conquistas
+                        Text("Conquistas")
+                            .font(.system(size: 32))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal)
+                            // Borda preta mais fina
+                            .shadow(color: .black, radius: 0.5, x: 0.5, y: 0.5)
+                            .shadow(color: .black, radius: 0.5, x: -0.5, y: -0.5)
+                            .shadow(color: .black, radius: 0.5, x: 0.5, y: -0.5)
+                            .shadow(color: .black, radius: 0.5, x: -0.5, y: 0.5)
+
+
+
+
+                        VStack(spacing: 16) {
+                            ForEach(coordinator.conquistas.sorted { $0.isUnlocked && !$1.isUnlocked }) { achievement in
+                                AchievementView(achievement: achievement)
+                                    .padding(.horizontal)
+                            }
                         }
                     }
-                    .padding(.top, 10)
-                    .padding(.bottom, 0)
+                    .padding(.top, 20)
+                    .padding(.bottom, 20)
                 }
             }
         }
         .backgroundMusic(.homeProfile)
+    }
+}
+
+// Preview
+struct ProfileView_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileView()
     }
 }
