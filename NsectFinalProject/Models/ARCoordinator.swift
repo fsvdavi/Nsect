@@ -10,7 +10,17 @@ class ARCoordinator: NSObject, ObservableObject {
         "RedAnt": SIMD3<Float>(0.01, 0.01, 0.01),
         "Scorpion": SIMD3<Float>(0.006, 0.006, 0.006),
         "besouro": SIMD3<Float>(0.002, 0.002, 0.002),
-        "spider": SIMD3<Float>(0.03, 0.03, 0.03)
+        "spider": SIMD3<Float>(0.03, 0.03, 0.03),
+        "AbelhaCarpinteira": SIMD3<Float>(0.05, 0.05, 0.05),
+        "AranhaPavão": SIMD3<Float>(0.05, 0.05, 0.05),
+        "BesouroBomba": SIMD3<Float>(0.05, 0.05, 0.05),
+        "Bicho-Pau": SIMD3<Float>(0.05, 0.05, 0.05),
+        "EscorpiaoCaudaChicote": SIMD3<Float>(0.1, 0.1, 0.1),
+        "FormigaLeão": SIMD3<Float>(0.05, 0.05, 0.05),
+        "gorgulhoGirafa": SIMD3<Float>(0.05, 0.05, 0.05),
+        "HatsuneMiku": SIMD3<Float>(0.003, 0.003, 0.003),
+        "jewelSpiderglb": SIMD3<Float>(0.1, 0.1, 0.1),
+        "LouvaDeusOrquidea": SIMD3<Float>(0.08, 0.08, 0.08)
     ]
 
     var boxEntity: ModelEntity?
@@ -221,8 +231,20 @@ class ARCoordinator: NSObject, ObservableObject {
         await MainActor.run {
             do {
                 let entity = try ModelEntity.loadModel(named: artropode.modelo3d)
+
+                // Corrigir modelos que estão tortos
+                switch artropode.modelo3d {
+                case "AranhaPavão",
+                     "BesouroBomba",
+                     "Bicho-pau",
+                     "EscorpiaoCaudaChicote",
+                     "jewelSpiderglb":
+                    entity.transform.rotation = simd_quatf(angle: .pi/2, axis: [1,0,0])
+                default:
+                    break
+                }
+
                 entity.scale = self.insetoEscalas[artropode.modelo3d] ?? SIMD3<Float>(0.05, 0.05, 0.05)
-                if artropode.modelo3d == "mantis" { entity.transform.rotation = simd_quatf(angle: .pi, axis: [0,1,0]) }
 
                 self.boxEntity = entity
                 entity.position = SIMD3<Float>(Float.random(in: -0.2...0.2), 0, Float.random(in: -0.2...0.2))
@@ -240,6 +262,8 @@ class ARCoordinator: NSObject, ObservableObject {
             } catch { print("❌ Erro ao carregar modelo '\(artropode.modelo3d)': \(error)") }
         }
     }
+
+
 
     func capturarNsect() {
         guard let artropode = artropodeAtual else { return }
