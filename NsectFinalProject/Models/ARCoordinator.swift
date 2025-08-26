@@ -33,6 +33,14 @@ class ARCoordinator: NSObject, ObservableObject {
     private var timerCheckCapture: Timer?
     private var timerLoadInseto: Timer?
 
+    // Referência ao progresso do jogador
+    private var playerProgress: PlayerProgress?
+
+    func attach(playerProgress: PlayerProgress) {
+        self.playerProgress = playerProgress
+        Task { await playerProgress.evaluateUnlocks() }
+    }
+
     // MARK: - Configuração da Cena AR
     func configurarCenaAR() -> ARView {
         self.boxEntity = nil
@@ -59,7 +67,7 @@ class ARCoordinator: NSObject, ObservableObject {
         }
 
         if timerLoadInseto == nil {
-            timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
                 guard let self = self else { return }
                 if self.boxEntity == nil {
                     self.carregarInsetoAleatorio(anchor: anchor)
@@ -92,30 +100,51 @@ class ARCoordinator: NSObject, ObservableObject {
         }
     }
 
+    // MARK: - carregarInsetoAleatorio
     func carregarInsetoAleatorio(anchor: AnchorEntity) {
         guard boxEntity == nil else { return }
 
-        let artropodesComModelo = artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }
-        guard let artropode = artropodesComModelo.randomElement() else { return }
-        artropodeAtual = artropode
+        Task { [weak self] in
+            guard let self = self else { return }
 
-        do {
-            let entity = try ModelEntity.loadModel(named: artropode.modelo3d)
-            entity.scale = insetoEscalas[artropode.modelo3d] ?? SIMD3<Float>(0.05, 0.05, 0.05)
-            if artropode.modelo3d == "mantis" {
-                entity.transform.rotation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+            let artropodesComModelo = self.artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }
+
+            var permitted: [Artropode] = []
+            if let pp = self.playerProgress {
+                for art in artropodesComModelo {
+                    if let rarityEnum = PlayerProgress.Rarity(rawValue: art.raridade),
+                       await pp.canSpawn(rarity: rarityEnum) {
+                        permitted.append(art)
+                    }
+                }
+            } else {
+                permitted = artropodesComModelo
             }
 
-            self.boxEntity = entity
-            entity.position = SIMD3<Float>(Float.random(in: -0.2...0.2), 0, Float.random(in: -0.2...0.2))
-            anchor.addChild(entity)
-
-            DispatchQueue.main.async {
-                self.mensagem = "Inseto encontrado!"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
+            guard let artropode = permitted.randomElement() else {
+                print("❌ Nenhum artropode permitido para spawn.")
+                return
             }
-        } catch {
-            print("Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
+
+            await MainActor.run {
+                do {
+                    let entity = try ModelEntity.loadModel(named: artropode.modelo3d)
+                    entity.scale = self.insetoEscalas[artropode.modelo3d] ?? SIMD3<Float>(0.05, 0.05, 0.05)
+                    if artropode.modelo3d == "mantis" {
+                        entity.transform.rotation = simd_quatf(angle: .pi, axis: [0, 1, 0])
+                    }
+
+                    self.boxEntity = entity
+                    entity.position = SIMD3<Float>(Float.random(in: -0.2...0.2), 0, Float.random(in: -0.2...0.2))
+                    anchor.addChild(entity)
+
+                    self.artropodeAtual = artropode
+                    self.mensagem = "Inseto encontrado!"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
+                } catch {
+                    print("Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
+                }
+            }
         }
     }
 
@@ -123,13 +152,11 @@ class ARCoordinator: NSObject, ObservableObject {
     func capturarNsect() {
         guard let artropode = artropodeAtual else { return }
 
-        // Remove o modelo 3D da cena
         DispatchQueue.main.async {
             self.boxEntity?.removeFromParent()
             self.boxEntity = nil
             self.artropodeAtual = nil
 
-            // Atualiza inventário
             if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
                 if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
                     self.artropodesDisponiveis[index].foiCapturado = true
@@ -141,6 +168,14 @@ class ARCoordinator: NSObject, ObservableObject {
                 }
                 self.salvarInventario()
                 self.atualizarConquistas()
+
+                // ✅ Concede XP baseado na raridade
+                if let pp = self.playerProgress,
+                   let rarityEnum = PlayerProgress.Rarity(rawValue: artropode.raridade) {
+                    Task { @MainActor in
+                        pp.grantXPForCapture(rarity: rarityEnum)
+                    }
+                }
             }
 
             self.mensagem = "Inseto capturado!"

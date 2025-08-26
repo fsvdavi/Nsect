@@ -67,10 +67,13 @@ struct SplashView: View {
 }
 
 @main
-struct MeuApp: App {
+struct NsectApp: App {
+    @StateObject private var progress = PlayerProgress.loadOrCreate()
+
     var body: some Scene {
         WindowGroup {
             SplashView()
+                .environmentObject(progress)
         }
     }
 }

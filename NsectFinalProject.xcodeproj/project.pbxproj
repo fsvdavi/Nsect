@@ -11,11 +11,13 @@
 		2234E4F72E26E2400062D6A9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F62E26E2400062D6A9 /* SDWebImageSwiftUI */; };
 		2286F9FD2E5CD8180071FE12 /* Catálogo.csv in Resources */ = {isa = PBXBuildFile; fileRef = 2286F9FC2E5CD8180071FE12 /* Catálogo.csv */; };
 		22FEA7FA2E2AD5F1000B9907 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 22FEA7F92E2AD5F1000B9907 /* SwiftCSV */; };
+		22FEF4BE2E5E24EB00510EA5 /* PlayerProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FEF4BD2E5E24EB00510EA5 /* PlayerProgress.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2286F9FC2E5CD8180071FE12 /* Catálogo.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Catálogo.csv"; sourceTree = "<group>"; };
 		229F9CE92E18673600619C20 /* NsectFinalProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NsectFinalProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		22FEF4BD2E5E24EB00510EA5 /* PlayerProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProgress.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -37,11 +39,6 @@
 			path = NsectFinalProject;
 			sourceTree = "<group>";
 		};
-		22D0144D2E5CDB0D00A88B48 /* Sons */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Sons;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +58,7 @@
 		229F9CE02E18673600619C20 = {
 			isa = PBXGroup;
 			children = (
-				22D0144D2E5CDB0D00A88B48 /* Sons */,
+				22FEF4BD2E5E24EB00510EA5 /* PlayerProgress.swift */,
 				229F9CEB2E18673600619C20 /* NsectFinalProject */,
 				229F9CEA2E18673600619C20 /* Products */,
 				2286F9FC2E5CD8180071FE12 /* Catálogo.csv */,
@@ -93,7 +90,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				229F9CEB2E18673600619C20 /* NsectFinalProject */,
-				22D0144D2E5CDB0D00A88B48 /* Sons */,
 			);
 			name = NsectFinalProject;
 			packageProductDependencies = (
@@ -160,6 +156,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22FEF4BE2E5E24EB00510EA5 /* PlayerProgress.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
