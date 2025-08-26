@@ -139,7 +139,7 @@ class ARCoordinator: NSObject, ObservableObject {
                     anchor.addChild(entity)
 
                     self.artropodeAtual = artropode
-                    self.mensagem = "Inseto encontrado!"
+                    self.mensagem = "Inseto próximo detectado!"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
                 } catch {
                     print("Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
@@ -149,33 +149,62 @@ class ARCoordinator: NSObject, ObservableObject {
     }
 
     // MARK: - Captura
+//    func capturarNsect() {
+//        guard let artropode = artropodeAtual else { return }
+//
+//        DispatchQueue.main.async {
+//            self.boxEntity?.removeFromParent()
+//            self.boxEntity = nil
+//            self.artropodeAtual = nil
+//
+//            if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
+//                if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
+//                    self.artropodesDisponiveis[index].foiCapturado = true
+//                    self.insetosCapturados.append(self.artropodesDisponiveis[index])
+//                } else {
+//                    var novo = artropode
+//                    novo.foiCapturado = true
+//                    self.insetosCapturados.append(novo)
+//                }
+//                self.salvarInventario()
+//                self.atualizarConquistas()
+//
+//                // ✅ Concede XP baseado na raridade
+//                if let pp = self.playerProgress,
+//                   let rarityEnum = PlayerProgress.Rarity(rawValue: artropode.raridade) {
+//                    Task { @MainActor in
+//                        pp.grantXPForCapture(rarity: rarityEnum)
+//                    }
+//                }
+//            }
+//
+//            self.mensagem = "Inseto capturado!"
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
+//        }
+//    }
+    
+
+
     func capturarNsect() {
         guard let artropode = artropodeAtual else { return }
 
         DispatchQueue.main.async {
+            // Remove modelo 3D
             self.boxEntity?.removeFromParent()
             self.boxEntity = nil
             self.artropodeAtual = nil
 
-            if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
-                if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
-                    self.artropodesDisponiveis[index].foiCapturado = true
-                    self.insetosCapturados.append(self.artropodesDisponiveis[index])
-                } else {
-                    var novo = artropode
-                    novo.foiCapturado = true
-                    self.insetosCapturados.append(novo)
+            // Verifica se já foi capturado
+            if !artropode.foiCapturado {
+                artropode.foiCapturado = true
+                
+                // Adiciona ao inventário se ainda não estiver
+                if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
+                    self.insetosCapturados.append(artropode)
                 }
+                
                 self.salvarInventario()
                 self.atualizarConquistas()
-
-                // ✅ Concede XP baseado na raridade
-                if let pp = self.playerProgress,
-                   let rarityEnum = PlayerProgress.Rarity(rawValue: artropode.raridade) {
-                    Task { @MainActor in
-                        pp.grantXPForCapture(rarity: rarityEnum)
-                    }
-                }
             }
 
             self.mensagem = "Inseto capturado!"
@@ -203,18 +232,39 @@ class ARCoordinator: NSObject, ObservableObject {
         }
     }
 
+    //    USAR O .filter CRIA UM ARRAY DIFERENTE QUE NAO É @PUBLISHED LOGO SO CARREGA NOVOS INSETO CAPTURADOS APOS REINICO DO APLICATIVO
+    //    func carregarInventario() {
+    //        do {
+    //            let dados = try Data(contentsOf: caminhoInventario)
+    //            let ids = try JSONDecoder().decode([ArtropodeSalvo].self, from: dados)
+    //            let capturados = artropodesDisponiveis.filter { art in ids.contains(where: { $0.id == art.id }) }
+    //            for art in capturados { art.foiCapturado = true }
+    //            insetosCapturados = capturados
+    //        } catch {
+    //            print("Nenhum inventário salvo ou erro ao carregar: \(error)")
+    //        }
+    //    }
+    
     func carregarInventario() {
         do {
             let dados = try Data(contentsOf: caminhoInventario)
             let ids = try JSONDecoder().decode([ArtropodeSalvo].self, from: dados)
-            let capturados = artropodesDisponiveis.filter { art in ids.contains(where: { $0.id == art.id }) }
-            for art in capturados { art.foiCapturado = true }
-            insetosCapturados = capturados
+            
+            // Marca diretamente nos objetos existentes
+            for art in artropodesDisponiveis {
+                if ids.contains(where: { $0.id == art.id }) {
+                    art.foiCapturado = true
+                    if !insetosCapturados.contains(where: { $0.id == art.id }) {
+                        insetosCapturados.append(art)
+                    }
+                }
+            }
         } catch {
             print("Nenhum inventário salvo ou erro ao carregar: \(error)")
         }
     }
 
+        
     // MARK: - Conquistas
     private var caminhoConquistas: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("conquistas.json")
