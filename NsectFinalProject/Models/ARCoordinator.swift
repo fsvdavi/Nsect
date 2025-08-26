@@ -32,16 +32,21 @@ class ARCoordinator: NSObject, ObservableObject {
 
     private var timerCheckCapture: Timer?
     private var timerLoadInseto: Timer?
-
-    // Referência ao progresso do jogador
     private var playerProgress: PlayerProgress?
+
+    var spawnWeights: [PlayerProgress.Rarity: Int] = [
+        .comum: 50,
+        .raro: 30,
+        .epico: 14,
+        .lendario: 5,
+        .secret: 1
+    ]
 
     func attach(playerProgress: PlayerProgress) {
         self.playerProgress = playerProgress
-        Task { await playerProgress.evaluateUnlocks() }
+        Task { await playerProgress.evaluateUnlocksAsync() }
     }
 
-    // MARK: - Configuração da Cena AR
     func configurarCenaAR() -> ARView {
         self.boxEntity = nil
         self.arView = nil
@@ -67,7 +72,7 @@ class ARCoordinator: NSObject, ObservableObject {
         }
 
         if timerLoadInseto == nil {
-            timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+            timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
                 guard let self = self else { return }
                 if self.boxEntity == nil {
                     self.carregarInsetoAleatorio(anchor: anchor)
@@ -100,7 +105,60 @@ class ARCoordinator: NSObject, ObservableObject {
         }
     }
 
-    // MARK: - carregarInsetoAleatorio
+    private func rarityEnum(for art: Artropode) async -> PlayerProgress.Rarity {
+        if let pp = playerProgress {
+            return await MainActor.run { pp.rarityFromString(art.raridade) }
+        } else {
+            let folded = art.raridade
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .folding(options: .diacriticInsensitive, locale: .current)
+                .lowercased()
+            switch folded {
+            case "comum","common": return .comum
+            case "raro","rare": return .raro
+            case "epico","épico","epic": return .epico
+            case "lendario","lendário","legendary": return .lendario
+            case "secret","secreto": return .secret
+            default: return .comum
+            }
+        }
+    }
+
+    private func weight(for art: Artropode) async -> Int {
+        let rar = await rarityEnum(for: art)
+        return spawnWeights[rar] ?? 0
+    }
+    
+    private func chooseWeighted(_ list: [Artropode]) async -> Artropode? {
+        guard !list.isEmpty else { return nil }
+
+        var itemsWithWeight: [(Artropode, Int)] = []
+        for art in list {
+            let w = await weight(for: art)
+            itemsWithWeight.append((art, w))
+        }
+
+        let total = itemsWithWeight.reduce(0) { $0 + max(0, $1.1) }
+
+        if total <= 0 {
+            if let rnd = list.randomElement() {
+                let r = await rarityEnum(for: rnd)
+                print("⚠️ Todos pesos = 0. Fallback escolha uniforme -> \(rnd.nomePopular) (\(r.rawValue))")
+                return rnd
+            }
+            return nil
+        }
+
+        let target = Int.random(in: 0..<total)
+        var acc = 0
+        for (art, w) in itemsWithWeight {
+            acc += max(0, w)
+            if target < acc { return art }
+        }
+
+        return itemsWithWeight.first?.0
+    }
+
     func carregarInsetoAleatorio(anchor: AnchorEntity) {
         guard boxEntity == nil else { return }
 
@@ -108,12 +166,12 @@ class ARCoordinator: NSObject, ObservableObject {
             guard let self = self else { return }
 
             let artropodesComModelo = self.artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }
-
             var permitted: [Artropode] = []
+
             if let pp = self.playerProgress {
                 for art in artropodesComModelo {
-                    if let rarityEnum = PlayerProgress.Rarity(rawValue: art.raridade),
-                       await pp.canSpawn(rarity: rarityEnum) {
+                    let rar = await MainActor.run { pp.rarityFromString(art.raridade) }
+                    if await pp.canSpawn(rarity: rar) {
                         permitted.append(art)
                     }
                 }
@@ -121,94 +179,104 @@ class ARCoordinator: NSObject, ObservableObject {
                 permitted = artropodesComModelo
             }
 
-            guard let artropode = permitted.randomElement() else {
+            if permitted.isEmpty {
                 print("❌ Nenhum artropode permitido para spawn.")
                 return
             }
 
-            await MainActor.run {
-                do {
-                    let entity = try ModelEntity.loadModel(named: artropode.modelo3d)
-                    entity.scale = self.insetoEscalas[artropode.modelo3d] ?? SIMD3<Float>(0.05, 0.05, 0.05)
-                    if artropode.modelo3d == "mantis" {
-                        entity.transform.rotation = simd_quatf(angle: .pi, axis: [0, 1, 0])
-                    }
-
-                    self.boxEntity = entity
-                    entity.position = SIMD3<Float>(Float.random(in: -0.2...0.2), 0, Float.random(in: -0.2...0.2))
-                    anchor.addChild(entity)
-
-                    self.artropodeAtual = artropode
-                    self.mensagem = "Inseto próximo detectado!"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
-                } catch {
-                    print("Erro ao carregar modelo '\(artropode.modelo3d)': \(error)")
-                }
+            var countsByRarity: [String: Int] = [:]
+            for art in permitted {
+                let rar = await rarityEnum(for: art).rawValue
+                countsByRarity[rar, default: 0] += 1
             }
+            print("🔎 Permitidos para spawn (counts por raridade): \(countsByRarity) — total \(permitted.count)")
+
+            guard let chosen = await chooseWeighted(permitted) else {
+                print("❌ Escolha ponderada falhou, escolhendo aleatório simples.")
+                if let fallback = permitted.randomElement() {
+                    await spawn(artropode: fallback, anchor: anchor)
+                }
+                return
+            }
+
+            let chosenRarity = await rarityEnum(for: chosen)
+
+            // Calcula totalWeight com loop assíncrono
+            var totalWeight = 0
+            for art in permitted {
+                totalWeight += await weight(for: art)
+            }
+
+            let chosenWeight = await weight(for: chosen)
+            let prob: Double = totalWeight > 0 ? Double(chosenWeight) / Double(totalWeight) : 1.0 / Double(permitted.count)
+
+            print("🎯 Escolhido: \(chosen.nomePopular) (id:\(chosen.id)) — raridade: \(chosenRarity.rawValue) — peso: \(chosenWeight)/total: \(totalWeight) -> prob: \(String(format: "%.2f", prob))")
+
+            await spawn(artropode: chosen, anchor: anchor)
         }
     }
 
-    // MARK: - Captura
-//    func capturarNsect() {
-//        guard let artropode = artropodeAtual else { return }
-//
-//        DispatchQueue.main.async {
-//            self.boxEntity?.removeFromParent()
-//            self.boxEntity = nil
-//            self.artropodeAtual = nil
-//
-//            if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
-//                if let index = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
-//                    self.artropodesDisponiveis[index].foiCapturado = true
-//                    self.insetosCapturados.append(self.artropodesDisponiveis[index])
-//                } else {
-//                    var novo = artropode
-//                    novo.foiCapturado = true
-//                    self.insetosCapturados.append(novo)
-//                }
-//                self.salvarInventario()
-//                self.atualizarConquistas()
-//
-//                // ✅ Concede XP baseado na raridade
-//                if let pp = self.playerProgress,
-//                   let rarityEnum = PlayerProgress.Rarity(rawValue: artropode.raridade) {
-//                    Task { @MainActor in
-//                        pp.grantXPForCapture(rarity: rarityEnum)
-//                    }
-//                }
-//            }
-//
-//            self.mensagem = "Inseto capturado!"
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
-//        }
-//    }
-    
 
+    private func spawn(artropode: Artropode, anchor: AnchorEntity) async {
+        await MainActor.run {
+            do {
+                let entity = try ModelEntity.loadModel(named: artropode.modelo3d)
+                entity.scale = self.insetoEscalas[artropode.modelo3d] ?? SIMD3<Float>(0.05, 0.05, 0.05)
+                if artropode.modelo3d == "mantis" { entity.transform.rotation = simd_quatf(angle: .pi, axis: [0,1,0]) }
+
+                self.boxEntity = entity
+                entity.position = SIMD3<Float>(Float.random(in: -0.2...0.2), 0, Float.random(in: -0.2...0.2))
+                anchor.addChild(entity)
+                self.artropodeAtual = artropode
+
+                self.mensagem = "Inseto próximo detectado!"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
+
+                Task {
+                    let rar = await rarityEnum(for: artropode)
+                    print("✅ Spawn completo: \(artropode.nomePopular) [\(artropode.id)] — raridade: \(rar.rawValue)")
+                }
+
+            } catch { print("❌ Erro ao carregar modelo '\(artropode.modelo3d)': \(error)") }
+        }
+    }
 
     func capturarNsect() {
         guard let artropode = artropodeAtual else { return }
 
         DispatchQueue.main.async {
-            // Remove modelo 3D
             self.boxEntity?.removeFromParent()
             self.boxEntity = nil
             self.artropodeAtual = nil
 
-            // Verifica se já foi capturado
             if !artropode.foiCapturado {
                 artropode.foiCapturado = true
-                
-                // Adiciona ao inventário se ainda não estiver
-                if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
+
+                if let idx = self.artropodesDisponiveis.firstIndex(where: { $0.id == artropode.id }) {
+                    self.artropodesDisponiveis[idx].foiCapturado = true
+                    if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
+                        self.insetosCapturados.append(self.artropodesDisponiveis[idx])
+                    }
+                } else if !self.insetosCapturados.contains(where: { $0.id == artropode.id }) {
                     self.insetosCapturados.append(artropode)
                 }
-                
+
                 self.salvarInventario()
                 self.atualizarConquistas()
+
+                if let pp = self.playerProgress {
+                    Task { @MainActor in
+                        let rarity = await self.rarityEnum(for: artropode)
+                        pp.grantXPForCapture(rarity: rarity)
+                        print("✨ XP concedido: \(artropode.nomePopular) — raridade: \(rarity.rawValue) — XP: \(pp.xp) Level: \(pp.level)")
+                    }
+                }
             }
 
             self.mensagem = "Inseto capturado!"
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { self.mensagem = nil }
+
+            print("📥 Capturado: \(artropode.nomePopular) (id: \(artropode.id))")
         }
     }
 
@@ -227,44 +295,25 @@ class ARCoordinator: NSObject, ObservableObject {
         do {
             let dados = try JSONEncoder().encode(ids)
             try dados.write(to: caminhoInventario)
-        } catch {
-            print("Erro ao salvar inventário: \(error)")
-        }
+            print("💾 Inventário salvo (\(ids.count) itens).")
+        } catch { print("❌ Erro ao salvar inventário: \(error)") }
     }
 
-    //    USAR O .filter CRIA UM ARRAY DIFERENTE QUE NAO É @PUBLISHED LOGO SO CARREGA NOVOS INSETO CAPTURADOS APOS REINICO DO APLICATIVO
-    //    func carregarInventario() {
-    //        do {
-    //            let dados = try Data(contentsOf: caminhoInventario)
-    //            let ids = try JSONDecoder().decode([ArtropodeSalvo].self, from: dados)
-    //            let capturados = artropodesDisponiveis.filter { art in ids.contains(where: { $0.id == art.id }) }
-    //            for art in capturados { art.foiCapturado = true }
-    //            insetosCapturados = capturados
-    //        } catch {
-    //            print("Nenhum inventário salvo ou erro ao carregar: \(error)")
-    //        }
-    //    }
-    
     func carregarInventario() {
         do {
             let dados = try Data(contentsOf: caminhoInventario)
             let ids = try JSONDecoder().decode([ArtropodeSalvo].self, from: dados)
-            
-            // Marca diretamente nos objetos existentes
+
             for art in artropodesDisponiveis {
                 if ids.contains(where: { $0.id == art.id }) {
                     art.foiCapturado = true
-                    if !insetosCapturados.contains(where: { $0.id == art.id }) {
-                        insetosCapturados.append(art)
-                    }
+                    if !insetosCapturados.contains(where: { $0.id == art.id }) { insetosCapturados.append(art) }
                 }
             }
-        } catch {
-            print("Nenhum inventário salvo ou erro ao carregar: \(error)")
-        }
+            print("📥 Inventário carregado (\(insetosCapturados.count) itens).")
+        } catch { }
     }
 
-        
     // MARK: - Conquistas
     private var caminhoConquistas: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("conquistas.json")
@@ -286,6 +335,7 @@ class ARCoordinator: NSObject, ObservableObject {
         if let index = conquistas.firstIndex(where: { $0.title == titulo && !$0.isUnlocked }) {
             conquistas[index].isUnlocked = true
             salvarConquistas()
+            print("🏆 Conquista desbloqueada: \(titulo)")
         }
     }
 
@@ -294,7 +344,7 @@ class ARCoordinator: NSObject, ObservableObject {
         do {
             let dados = try JSONEncoder().encode(conquistasSalvas)
             try dados.write(to: caminhoConquistas)
-        } catch { print("Erro ao salvar conquistas: \(error)") }
+        } catch { print("❌ Erro ao salvar conquistas: \(error)") }
     }
 
     func carregarConquistas() {
@@ -306,14 +356,23 @@ class ARCoordinator: NSObject, ObservableObject {
                     conquistas[index].isUnlocked = cs.isUnlocked
                 }
             }
-        } catch {
-            print("Nenhuma conquista salva ou erro ao carregar: \(error)")
-        }
+        } catch { }
     }
 
     override init() {
         super.init()
         carregarInventario()
         carregarConquistas()
+    }
+}
+
+// MARK: - Helper Async Reduce
+extension Array {
+    func asyncReduce<Result>(_ initial: Result, _ transform: (Result, Element) async -> Result) async -> Result {
+        var result = initial
+        for element in self {
+            result = await transform(result, element)
+        }
+        return result
     }
 }

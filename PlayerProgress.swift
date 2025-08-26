@@ -13,6 +13,17 @@ final class PlayerProgress: ObservableObject, Codable {
         case epico = "Épico"
         case lendario = "Lendário"
         case secret = "Secret"
+
+        /// Peso de sorteio (chance relativa de aparecer)
+        var peso: Int {
+            switch self {
+            case .comum: return 50
+            case .raro: return 30
+            case .epico: return 14
+            case .lendario: return 5
+            case .secret: return 1
+            }
+        }
     }
 
     // MARK: - Published (estado que as views observam)
