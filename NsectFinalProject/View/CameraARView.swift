@@ -8,8 +8,12 @@ struct CameraARView: View {
     @State private var skillTapToken = UUID()
     @StateObject private var skillVM = SkillCheckViewModel()
 
+    private var isCaptureEnabled: Bool {
+        arCoordinator.canCapture
+    }
+
     private var captureButtonFill: Color {
-        (arCoordinator.canCapture || showSkillCheck) ? .green : .gray.opacity(0.55)
+        isCaptureEnabled ? .green : .gray.opacity(0.55)
     }
 
     var body: some View {
@@ -62,7 +66,6 @@ struct CameraARView: View {
                     },
                     onFail: {
                         arCoordinator.mensagem = "Falhou na captura!"
-                        // Remove o inseto da cena
                         arCoordinator.boxEntity?.removeFromParent()
                         arCoordinator.boxEntity = nil
                         arCoordinator.artropodeAtual = nil
@@ -77,7 +80,7 @@ struct CameraARView: View {
                 Spacer()
                 Button(action: {
                     if showSkillCheck {
-                        skillTapToken = UUID() // registrou o toque na SkillCheck
+                        skillTapToken = UUID() // registra toque na SkillCheck
                     } else if arCoordinator.canCapture {
                         showSkillCheck = true
                         skillVM.currentStage = 1
@@ -85,19 +88,19 @@ struct CameraARView: View {
                     }
                 }) {
                     Circle()
-                        .fill(captureButtonFill)
+                        .fill(captureButtonFill) // ainda depende só de canCapture
                         .frame(width: 80, height: 80)
-                        .shadow(color: (arCoordinator.canCapture || showSkillCheck) ? .green : .black.opacity(0.2), radius: 10)
+                        .shadow(color: isCaptureEnabled ? .green : .black.opacity(0.2), radius: 10)
                         .overlay(
                             Image(systemName: "scope")
                                 .foregroundColor(.white)
                                 .font(.system(size: 30))
                         )
-                        .scaleEffect(arCoordinator.canCapture || showSkillCheck ? 1.1 : 1.0)
-                        .animation(.easeInOut(duration: 0.3), value: arCoordinator.canCapture || showSkillCheck)
+                        .scaleEffect(isCaptureEnabled ? 1.1 : 1.0)
+                        .animation(.easeInOut(duration: 0.3), value: isCaptureEnabled)
                 }
-                .disabled(!arCoordinator.canCapture && !showSkillCheck)
-                .padding(.bottom, 40)
+                .disabled(!arCoordinator.canCapture && !showSkillCheck) // habilita durante SkillCheck
+
             }
         }
     }
