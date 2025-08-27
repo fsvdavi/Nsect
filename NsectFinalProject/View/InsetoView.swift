@@ -376,8 +376,8 @@ struct CustomSceneView: UIViewRepresentable {
 struct InsetoDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let artropodes = carregarArtropodes()
-        if artropodes.indices.contains(4) {
-            InsetoDetailView(artropode: artropodes[4])
+        if artropodes.indices.contains(18) {
+            InsetoDetailView(artropode: artropodes[18])
         } else {
             Text("Nenhum inseto disponível")
         }
