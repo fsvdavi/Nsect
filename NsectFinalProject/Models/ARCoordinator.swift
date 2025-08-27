@@ -1,3 +1,4 @@
+// ARCoordinator.swift
 import RealityKit
 import ARKit
 import SwiftUI
@@ -52,11 +53,13 @@ class ARCoordinator: NSObject, ObservableObject {
         .secret: 1
     ]
 
+    /// Liga o progresso do jogador (para XP e desbloqueios de raridades)
     func attach(playerProgress: PlayerProgress) {
         self.playerProgress = playerProgress
         Task { await playerProgress.evaluateUnlocksAsync() }
     }
 
+    /// Configura a cena AR
     func configurarCenaAR() -> ARView {
         self.boxEntity = nil
         self.arView = nil
@@ -135,8 +138,13 @@ class ARCoordinator: NSObject, ObservableObject {
     }
 
     private func weight(for art: Artropode) async -> Int {
+        guard let pp = playerProgress else {
+            return spawnWeights[await rarityEnum(for: art)] ?? 0
+        }
+
         let rar = await rarityEnum(for: art)
-        return spawnWeights[rar] ?? 0
+        // pp.canSpawn(rarity:) is synchronous on MainActor; we call it with await
+        return await MainActor.run { pp.canSpawn(rarity: rar) ? spawnWeights[rar] ?? 0 : 0 }
     }
     
     private func chooseWeighted(_ list: [Artropode]) async -> Artropode? {
@@ -149,14 +157,8 @@ class ARCoordinator: NSObject, ObservableObject {
         }
 
         let total = itemsWithWeight.reduce(0) { $0 + max(0, $1.1) }
-
         if total <= 0 {
-            if let rnd = list.randomElement() {
-                let r = await rarityEnum(for: rnd)
-                print("⚠️ Todos pesos = 0. Fallback escolha uniforme -> \(rnd.nomePopular) (\(r.rawValue))")
-                return rnd
-            }
-            return nil
+            return list.randomElement()
         }
 
         let target = Int.random(in: 0..<total)
@@ -178,12 +180,14 @@ class ARCoordinator: NSObject, ObservableObject {
             let artropodesComModelo = self.artropodesDisponiveis.filter { !$0.modelo3d.isEmpty }
             var permitted: [Artropode] = []
 
+            // FILTRA APENAS RARIDADES DESBLOQUEADAS
             if let pp = self.playerProgress {
+                permitted = []
                 for art in artropodesComModelo {
+                    // chamando raridade e canSpawn via MainActor
                     let rar = await MainActor.run { pp.rarityFromString(art.raridade) }
-                    if await pp.canSpawn(rarity: rar) {
-                        permitted.append(art)
-                    }
+                    let ok = await MainActor.run { pp.canSpawn(rarity: rar) }
+                    if ok { permitted.append(art) }
                 }
             } else {
                 permitted = artropodesComModelo
@@ -211,7 +215,7 @@ class ARCoordinator: NSObject, ObservableObject {
 
             let chosenRarity = await rarityEnum(for: chosen)
 
-            // Calcula totalWeight com loop assíncrono
+            // Calcula totalWeight apenas considerando raridades desbloqueadas
             var totalWeight = 0
             for art in permitted {
                 totalWeight += await weight(for: art)
@@ -225,7 +229,6 @@ class ARCoordinator: NSObject, ObservableObject {
             await spawn(artropode: chosen, anchor: anchor)
         }
     }
-
 
     private func spawn(artropode: Artropode, anchor: AnchorEntity) async {
         await MainActor.run {
@@ -263,8 +266,6 @@ class ARCoordinator: NSObject, ObservableObject {
         }
     }
 
-
-
     func capturarNsect() {
         guard let artropode = artropodeAtual else { return }
 
@@ -293,6 +294,8 @@ class ARCoordinator: NSObject, ObservableObject {
                         let rarity = await self.rarityEnum(for: artropode)
                         pp.grantXPForCapture(rarity: rarity)
                         print("✨ XP concedido: \(artropode.nomePopular) — raridade: \(rarity.rawValue) — XP: \(pp.xp) Level: \(pp.level)")
+                        // reavalie desbloqueios após ganho de XP
+                        await pp.evaluateUnlocksAsync()
                     }
                 }
             }
@@ -371,6 +374,10 @@ class ARCoordinator: NSObject, ObservableObject {
         } catch { print("❌ Erro ao salvar conquistas: \(error)") }
     }
 
+    func carregarConquistes() {
+        carregarConquistas() // fallback para compatibilidade (método real abaixo)
+    }
+
     func carregarConquistas() {
         do {
             let dados = try Data(contentsOf: caminhoConquistas)
@@ -385,6 +392,11 @@ class ARCoordinator: NSObject, ObservableObject {
 
     override init() {
         super.init()
+        // Inicializa playerProgress no MainActor para evitar erros de isolamento
+        Task { @MainActor in
+            self.playerProgress = PlayerProgress.loadOrCreate()
+            await self.playerProgress?.evaluateUnlocksAsync()
+        }
         carregarInventario()
         carregarConquistas()
     }

@@ -1,6 +1,3 @@
-// PlayerProgress.swift
-// Gerencia XP, nível e desbloqueio de raridades
-
 import Foundation
 import Combine
 
@@ -114,7 +111,8 @@ final class PlayerProgress: ObservableObject, Codable {
 
     /// Força reavaliação dos unlocks (útil quando outra classe anexa ou carregamos do disco)
     func evaluateUnlocks() {
-        // atualiza/persiste estado; as views observam level/xp
+        // Atualiza/persiste estado; as views observam level/xp
+        // Aqui poderia adicionar lógica adicional se necessário (atualmente salva o progresso).
         save()
     }
 
