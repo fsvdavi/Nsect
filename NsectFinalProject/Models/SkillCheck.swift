@@ -68,6 +68,7 @@ struct SkillCheckView: View {
         endStage(success: hit)
     }
 
+
     private func endStage(success: Bool) {
         timer?.invalidate()
         if success {
