@@ -101,21 +101,43 @@ struct InventoryInsectView: View {
 
     private var gridView: some View {
         let items = filteredAndSortedInsects
-        return LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            ForEach(items, id: \.id) { inseto in
-                NavigationLink(destination: InsetoDetailView(artropode: inseto)
-                    .backgroundMusic(.inventoryDetail)
-                ) {
-                    MoldInsectView(insect: inseto)
-                        .shadow(color: .black.opacity(0.22), radius: 4, x: 0, y: 2)
-                        .scaleEffect(0.995)
+        
+        return Group {
+            if items.isEmpty {
+                VStack {
+                    Image(systemName: "ant.fill") // ícone nativo de formiga
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                        .foregroundColor(.green) // deixa a formiga verde
+                        .padding(.bottom, 20)
+                    
+                    Text("Você ainda não tem nenhum inseto")
+                        .font(.headline)
+                        .foregroundColor(.white)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.top, 50)
+            }
+                else {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(items, id: \.id) { inseto in
+                        NavigationLink(destination: InsetoDetailView(artropode: inseto)
+                            .backgroundMusic(.inventoryDetail)
+                        ) {
+                            MoldInsectView(insect: inseto)
+                                .shadow(color: .black.opacity(0.22), radius: 4, x: 0, y: 2)
+                                .scaleEffect(0.995)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 6)
             }
         }
-        .padding(.horizontal)
-        .padding(.top, 6)
     }
+
 
     private var filteredAndSortedInsects: [Artropode] {
         let lower = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
