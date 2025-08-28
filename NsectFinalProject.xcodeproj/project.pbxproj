@@ -9,20 +9,12 @@
 /* Begin PBXBuildFile section */
 		2234E4F42E26E1F40062D6A9 /* Shimmer in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F32E26E1F40062D6A9 /* Shimmer */; };
 		2234E4F72E26E2400062D6A9 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2234E4F62E26E2400062D6A9 /* SDWebImageSwiftUI */; };
-		22FA2D212E60DA37004E27B3 /* acerto.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22FA2D1C2E60DA37004E27B3 /* acerto.mp3 */; };
-		22FA2D222E60DA37004E27B3 /* botao.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22FA2D1E2E60DA37004E27B3 /* botao.mp3 */; };
-		22FA2D232E60DA37004E27B3 /* erro.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22FA2D1F2E60DA37004E27B3 /* erro.mp3 */; };
-		22FA2D252E60DA4F004E27B3 /* voltar.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 22FA2D242E60DA4F004E27B3 /* voltar.mp3 */; };
 		22FEA7FA2E2AD5F1000B9907 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 22FEA7F92E2AD5F1000B9907 /* SwiftCSV */; };
 		22FEF4BE2E5E24EB00510EA5 /* PlayerProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FEF4BD2E5E24EB00510EA5 /* PlayerProgress.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		229F9CE92E18673600619C20 /* NsectFinalProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NsectFinalProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		22FA2D1C2E60DA37004E27B3 /* acerto.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = acerto.mp3; sourceTree = "<group>"; };
-		22FA2D1E2E60DA37004E27B3 /* botao.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = botao.mp3; sourceTree = "<group>"; };
-		22FA2D1F2E60DA37004E27B3 /* erro.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = erro.mp3; sourceTree = "<group>"; };
-		22FA2D242E60DA4F004E27B3 /* voltar.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = voltar.mp3; sourceTree = "<group>"; };
 		22FEF4BD2E5E24EB00510EA5 /* PlayerProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProgress.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -64,10 +56,6 @@
 		229F9CE02E18673600619C20 = {
 			isa = PBXGroup;
 			children = (
-				22FA2D242E60DA4F004E27B3 /* voltar.mp3 */,
-				22FA2D1C2E60DA37004E27B3 /* acerto.mp3 */,
-				22FA2D1E2E60DA37004E27B3 /* botao.mp3 */,
-				22FA2D1F2E60DA37004E27B3 /* erro.mp3 */,
 				22FEF4BD2E5E24EB00510EA5 /* PlayerProgress.swift */,
 				229F9CEB2E18673600619C20 /* NsectFinalProject */,
 				229F9CEA2E18673600619C20 /* Products */,
@@ -154,10 +142,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22FA2D212E60DA37004E27B3 /* acerto.mp3 in Resources */,
-				22FA2D222E60DA37004E27B3 /* botao.mp3 in Resources */,
-				22FA2D232E60DA37004E27B3 /* erro.mp3 in Resources */,
-				22FA2D252E60DA4F004E27B3 /* voltar.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

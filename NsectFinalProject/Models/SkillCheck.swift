@@ -110,13 +110,14 @@ struct SkillCheckView: View {
     private func handleTap() {
         let hit = vm.checkHit(pointerX: pointerX, barWidth: barWidth)
         if hit {
-            // Clicou dentro da zona verde: sucesso
+            SoundEffectsManager.shared.play("acerto")
             endStage(success: true)
         } else {
-            // Clicou fora: falha
+            SoundEffectsManager.shared.play("erro")
             endStage(success: false)
         }
     }
+
 
     private func endStage(success: Bool) {
         timer?.invalidate()
