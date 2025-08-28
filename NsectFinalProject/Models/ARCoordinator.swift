@@ -26,6 +26,9 @@ class ARCoordinator: NSObject, ObservableObject {
 
     var boxEntity: ModelEntity?
     var arView: ARView?
+    
+    @Published var achievementToShow: Achievement? = nil
+
 
     @Published var artropodesDisponiveis: [Artropode] = carregarArtropodes()
     @Published var insetosCapturados: [Artropode] = []
@@ -384,11 +387,26 @@ class ARCoordinator: NSObject, ObservableObject {
 
     func desbloquearConquista(titulo: String) {
         if let index = conquistas.firstIndex(where: { $0.title == titulo && !$0.isUnlocked }) {
-            conquistas[index].isUnlocked = true
-            salvarConquistas()
-            print("🏆 Conquista desbloqueada: \(titulo)")
+            // garante operações de UI no Main Thread
+            DispatchQueue.main.async {
+                self.conquistas[index].isUnlocked = true
+                self.salvarConquistas()
+                print("🏆 Conquista desbloqueada: \(titulo)")
+
+                // seta para exibir o popup
+                self.achievementToShow = self.conquistas[index]
+
+                // auto-dismiss do popup após X segundos
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+                    // Apenas limpa se for a mesma conquista (evita sobrescrever caso outra já tenha aparecido)
+                    if self.achievementToShow?.title == titulo {
+                        self.achievementToShow = nil
+                    }
+                }
+            }
         }
     }
+
 
     func salvarConquistas() {
         let conquistasSalvas = conquistas.map { AchievementSalvo(title: $0.title, isUnlocked: $0.isUnlocked) }

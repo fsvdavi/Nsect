@@ -55,6 +55,27 @@ struct CameraARView: View {
                 }
                 Spacer()
             }
+            
+            // dentro do ZStack de CameraARView (posicione acima do botão de captura)
+            if let achievement = arCoordinator.achievementToShow {
+                VStack {
+                    Spacer().frame(height: 60) // distância do topo (ajuste se quiser)
+                    HStack {
+                        Spacer().frame(width: 14)
+                        AchievementPopupView(achievement: achievement)
+                            .onTapGesture {
+                                // permitir fechar o popup com toque
+                                arCoordinator.achievementToShow = nil
+                            }
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .animation(.spring(response: 0.45, dampingFraction: 0.7), value: arCoordinator.achievementToShow?.title)
+                .zIndex(999)
+            }
+
 
             // SkillCheck (visível acima da cena, mas não captura toques diretos para permitir que o botão de captura envie o token)
             if showSkillCheck {
