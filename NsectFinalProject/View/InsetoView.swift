@@ -376,9 +376,9 @@ struct CustomSceneView: UIViewRepresentable {
         "BesouroBomba": SIMD3<Float>(1.1, 1.1, 1.1),
         "Bicho-pau": SIMD3<Float>(1.4, 1.4, 1.4),
         "EscorpiaoCaudaChicote": SIMD3<Float>(1.3, 1.3, 1.3),
-        "FormigaLeão": SIMD3<Float>(1.2, 1.2, 1.2),
+        "FormigaLeão": SIMD3<Float>(1.4, 1.4, 1.4),
         "gorgulhoGirafa": SIMD3<Float>(1.1, 1.1, 1.1),
-        "HatsuneMiku": SIMD3<Float>(1.0, 1.0, 1.0), // costuma ser muito grande — escala pequena
+        "HatsuneMiku": SIMD3<Float>(1.0, 1.0, 1.0),
         "jewelSpiderglb": SIMD3<Float>(1.5, 1.5, 1.5),
         "Kuromi": SIMD3<Float>(0.9, 0.9, 0.9),
         "LouvaDeusOrquidea": SIMD3<Float>(1.3, 1.3, 1.3)
@@ -472,8 +472,8 @@ fileprivate func rarityBackgroundGradient(for rawRarity: String) -> LinearGradie
 struct InsetoDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let artropodes = carregarArtropodes()
-        if artropodes.indices.contains(18) {
-            InsetoDetailView(artropode: artropodes[18])
+        if artropodes.indices.contains(13) {
+            InsetoDetailView(artropode: artropodes[13])
         } else {
             Text("Nenhum inseto disponível")
         }
