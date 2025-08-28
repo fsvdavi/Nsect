@@ -86,10 +86,10 @@ struct SkillCheckView: View {
             startStage()
         } else {
             if vm.successRate() >= 0.75 {
-                SoundEffectsManager.shared.play("acerto") // som final de sucesso
+                SoundEffectsManager.shared.play("sucesso") // som final de sucesso
                 onSuccess()
             } else {
-                SoundEffectsManager.shared.play("erro") // som final de falha
+                SoundEffectsManager.shared.play("falha") // som final de falha
                 onFail()
             }
             isPresented = false
