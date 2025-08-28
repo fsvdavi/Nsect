@@ -27,19 +27,21 @@ struct HomeView: View {
                         Spacer()
                         
                         // Botão Perfil com animação
-                        NavigationLink {
-                            ProfileView()
-                                .navigationBarBackButtonHidden(true)
-                                .toolbar {
-                                    ToolbarItem(placement: .navigationBarLeading) {
-                                        FancyBackButton()
-                                    }
-                                }
-                        } label: {
+                        NavigationLink(destination: ProfileView()
+                                        .navigationBarBackButtonHidden(true)
+                                        .toolbar {
+                                            ToolbarItem(placement: .navigationBarLeading) {
+                                                FancyBackButton(soundName: "voltar")
+                                            }
+                                        }) {
                             AnimatedCircleImage(imageName: "hatsunemikuprofile", size: 80)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            SoundEffectsManager.shared.play("botao")
+                        })
                         .buttonStyle(.plain)
                         .padding(.trailing, 24)
+
                     }
                     .frame(height: topBarHeight)
                     .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
@@ -51,45 +53,50 @@ struct HomeView: View {
                     VStack(spacing: 10) {
                         
                         // Botão Explorar
-                        NavigationLink {
-                            CameraARView(arCoordinator: ARCoordinator())
-                                .navigationBarBackButtonHidden(true)
-                                .toolbar {
-                                    ToolbarItem(placement: .navigationBarLeading) {
-                                        FancyBackButton()
-                                    }
-                                }
-                        } label: {
+                        NavigationLink(destination: CameraARView(arCoordinator: ARCoordinator())
+                                        .navigationBarBackButtonHidden(true)
+                                        .toolbar {
+                                            ToolbarItem(placement: .navigationBarLeading) {
+                                                FancyBackButton(soundName: "voltar")
+                                            }
+                                        }) {
                             ButtonTemplate(imageName: "templatemadeira", icon: "magnifyingglass", text: "Explorar", glow: glow)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            SoundEffectsManager.shared.play("botao")
+                        })
                         .buttonStyle(.plain)
+
                         
                         // Botão Inventário
-                        NavigationLink {
-                            InventoryInsectView(arCoordinator: ARCoordinator())
-                                .navigationBarBackButtonHidden(true)
-                                .toolbar {
-                                    ToolbarItem(placement: .navigationBarLeading) {
-                                        FancyBackButton()
-                                    }
-                                }
-                        } label: {
+                        NavigationLink(destination: InventoryInsectView(arCoordinator: ARCoordinator())
+                                        .navigationBarBackButtonHidden(true)
+                                        .toolbar {
+                                            ToolbarItem(placement: .navigationBarLeading) {
+                                                FancyBackButton(soundName: "voltar")
+                                            }
+                                        }) {
                             ButtonTemplate(imageName: "templatemadeira", icon: "backpack.fill", text: "Inventário", glow: glow)
                         }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            SoundEffectsManager.shared.play("botao")
+                        })
                         .buttonStyle(.plain)
+
                         
                         // Quadradinhos abaixo com animação
                         HStack(spacing: 20) {
                             AnimatedButtonImage(imageName: "configuracao") {
+                                SoundEffectsManager.shared.play("botao") // som ao clicar
                                 showComingSoon = true
                             }
                             
                             AnimatedButtonImage(imageName: "classificacao") {
+                                SoundEffectsManager.shared.play("botao") // som ao clicar
                                 showComingSoon = true
                             }
                         }
-                        .padding(.top, -5)
-                    }
+                        .padding(.top, -5)                    }
                     .padding(.bottom, 50)
                 }
                 .onAppear {
@@ -278,9 +285,15 @@ struct TouchGestureModifier: ViewModifier {
 struct FancyBackButton: View {
     @Environment(\.dismiss) private var dismiss
     var label: String? = "Voltar"
-    
+    var soundName: String? = nil // se definido, toca o som
+
     var body: some View {
-        Button(action: { dismiss() }) {
+        Button(action: {
+            if let sound = soundName {
+                SoundEffectsManager.shared.play(sound)
+            }
+            dismiss()
+        }) {
             HStack(spacing: 8) {
                 Image(systemName: "chevron.left.circle.fill")
                     .font(.system(size: 18, weight: .bold))
@@ -293,15 +306,11 @@ struct FancyBackButton: View {
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 10)
-            .background(
-                Capsule()
-                    .fill(Color.black.opacity(0.25))
-            )
+            .background(Capsule().fill(Color.black.opacity(0.25)))
             .shadow(color: .black.opacity(0.35), radius: 6, x: 0, y: 3)
         }
     }
 }
-
 #Preview {
     HomeView()
 }
