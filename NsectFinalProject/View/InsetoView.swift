@@ -472,8 +472,8 @@ fileprivate func rarityBackgroundGradient(for rawRarity: String) -> LinearGradie
 struct InsetoDetailView_Previews: PreviewProvider {
     static var previews: some View {
         let artropodes = carregarArtropodes()
-        if artropodes.indices.contains(13) {
-            InsetoDetailView(artropode: artropodes[13])
+        if artropodes.indices.contains(18) {
+            InsetoDetailView(artropode: artropodes[18])
         } else {
             Text("Nenhum inseto disponível")
         }

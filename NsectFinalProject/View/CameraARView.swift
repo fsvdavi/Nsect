@@ -56,7 +56,7 @@ struct CameraARView: View {
                 Spacer()
             }
 
-            // SkillCheck
+            // SkillCheck (visível acima da cena, mas não captura toques diretos para permitir que o botão de captura envie o token)
             if showSkillCheck {
                 SkillCheckView(
                     vm: skillVM,
@@ -66,13 +66,14 @@ struct CameraARView: View {
                     },
                     onFail: {
                         arCoordinator.mensagem = "Falhou na captura!"
+                        // limpa o inseto atual como comportamento de falha
                         arCoordinator.boxEntity?.removeFromParent()
                         arCoordinator.boxEntity = nil
                         arCoordinator.artropodeAtual = nil
                     },
                     externalTapToken: $skillTapToken
                 )
-                .allowsHitTesting(false)
+                .allowsHitTesting(false) // permite que o botão de captura (abaixo) continue recebendo toques
             }
 
             // Botão de captura
@@ -80,15 +81,25 @@ struct CameraARView: View {
                 Spacer()
                 Button(action: {
                     if showSkillCheck {
-                        skillTapToken = UUID() // registra toque na SkillCheck
+                        // Quando o skill check estiver aberto, cada toque no botão gera um token único
+                        // que o SkillCheckView observa via `externalTapToken` e processa como "tap"
+                        skillTapToken = UUID()
                     } else if arCoordinator.canCapture {
-                        showSkillCheck = true
+                        // Configura o VM com a raridade do artropode atual antes de mostrar o SkillCheck
+                        if let art = arCoordinator.artropodeAtual {
+                            skillVM.configure(for: art.raridade)
+                        } else {
+                            // fallback para comum caso não haja artropode atual por algum motivo
+                            skillVM.configure(for: "comum")
+                        }
+                        // garante estado inicial limpo
                         skillVM.currentStage = 1
                         skillVM.hits = 0
+                        showSkillCheck = true
                     }
                 }) {
                     Circle()
-                        .fill(captureButtonFill) // ainda depende só de canCapture
+                        .fill(captureButtonFill)
                         .frame(width: 80, height: 80)
                         .shadow(color: isCaptureEnabled ? .green : .black.opacity(0.2), radius: 10)
                         .overlay(
@@ -100,7 +111,7 @@ struct CameraARView: View {
                         .animation(.easeInOut(duration: 0.3), value: isCaptureEnabled)
                 }
                 .disabled(!arCoordinator.canCapture && !showSkillCheck) // habilita durante SkillCheck
-
+                .padding(.bottom, 36)
             }
         }
     }
