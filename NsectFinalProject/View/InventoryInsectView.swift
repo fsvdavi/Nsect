@@ -123,6 +123,12 @@ struct InventoryInsectView: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                     ForEach(items, id: \.id) { inseto in
                         NavigationLink(destination: InsetoDetailView(artropode: inseto)
+                            .navigationBarBackButtonHidden(true)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarLeading) {
+                                    FancyBackButton()
+                                }
+                            }
                             .backgroundMusic(.inventoryDetail)
                         ) {
                             MoldInsectView(insect: inseto)

@@ -29,6 +29,12 @@ struct HomeView: View {
                         // Botão Perfil com animação
                         NavigationLink {
                             ProfileView()
+                                .navigationBarBackButtonHidden(true)
+                                .toolbar {
+                                    ToolbarItem(placement: .navigationBarLeading) {
+                                        FancyBackButton()
+                                    }
+                                }
                         } label: {
                             AnimatedCircleImage(imageName: "hatsunemikuprofile", size: 80)
                         }
@@ -47,6 +53,12 @@ struct HomeView: View {
                         // Botão Explorar
                         NavigationLink {
                             CameraARView(arCoordinator: ARCoordinator())
+                                .navigationBarBackButtonHidden(true)
+                                .toolbar {
+                                    ToolbarItem(placement: .navigationBarLeading) {
+                                        FancyBackButton()
+                                    }
+                                }
                         } label: {
                             ButtonTemplate(imageName: "templatemadeira", icon: "magnifyingglass", text: "Explorar", glow: glow)
                         }
@@ -55,6 +67,12 @@ struct HomeView: View {
                         // Botão Inventário
                         NavigationLink {
                             InventoryInsectView(arCoordinator: ARCoordinator())
+                                .navigationBarBackButtonHidden(true)
+                                .toolbar {
+                                    ToolbarItem(placement: .navigationBarLeading) {
+                                        FancyBackButton()
+                                    }
+                                }
                         } label: {
                             ButtonTemplate(imageName: "templatemadeira", icon: "backpack.fill", text: "Inventário", glow: glow)
                         }
@@ -253,6 +271,34 @@ struct TouchGestureModifier: ViewModifier {
                     .onChanged { _ in perform(true) }
                     .onEnded { _ in perform(false) }
             )
+    }
+}
+
+// Reusable fancy back button (declare aqui para HomeView file convenience)
+struct FancyBackButton: View {
+    @Environment(\.dismiss) private var dismiss
+    var label: String? = "Voltar"
+    
+    var body: some View {
+        Button(action: { dismiss() }) {
+            HStack(spacing: 8) {
+                Image(systemName: "chevron.left.circle.fill")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(
+                        LinearGradient(colors: [Color.green, Color.mint], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    )
+                Text(label ?? "Voltar")
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .foregroundColor(Color.white)
+            }
+            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .background(
+                Capsule()
+                    .fill(Color.black.opacity(0.25))
+            )
+            .shadow(color: .black.opacity(0.35), radius: 6, x: 0, y: 3)
+        }
     }
 }
 
