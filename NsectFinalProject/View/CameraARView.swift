@@ -62,11 +62,9 @@ struct CameraARView: View {
                     vm: skillVM,
                     isPresented: $showSkillCheck,
                     onSuccess: {
-//                        SoundEffectsManager.shared.play("sucesso")
                         arCoordinator.capturarNsect()
                     },
                     onFail: {
-//                        SoundEffectsManager.shared.play("falha")
                         arCoordinator.mensagem = "Falhou na captura!"
                         // limpa o inseto atual como comportamento de falha
                         arCoordinator.boxEntity?.removeFromParent()

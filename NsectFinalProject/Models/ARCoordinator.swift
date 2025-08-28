@@ -102,20 +102,44 @@ class ARCoordinator: NSObject, ObservableObject {
             return
         }
 
-        let center = CGPoint(x: arView.bounds.midX, y: arView.bounds.midY)
-        let results = arView.raycast(from: center, allowing: .estimatedPlane, alignment: .horizontal)
+        // Parâmetros que você pode afinar:
+        let captureDistance: Float = 0.6    // metros — diminua para 0.2 se quiser ser mais rigoroso
+        let angleThresholdDeg: Float = 8.0  // graus — quanto menor, mais preciso o "centro"
 
-        if let firstResult = results.first {
-            let raycastPos = SIMD3<Float>(
-                firstResult.worldTransform.columns.3.x,
-                firstResult.worldTransform.columns.3.y,
-                firstResult.worldTransform.columns.3.z
-            )
-            let dist = distance(boxEntity.position(relativeTo: nil), raycastPos)
-            DispatchQueue.main.async { self.canCapture = dist < 0.2 }
-        } else {
+        // Camera transform (mundo)
+        let camMatrix = arView.cameraTransform.matrix
+        let camPos = SIMD3<Float>(camMatrix.columns.3.x, camMatrix.columns.3.y, camMatrix.columns.3.z)
+        // Direção forward da câmera: -Z column (RealityKit usa Z positivo para trás)
+        let camForward = -SIMD3<Float>(camMatrix.columns.2.x, camMatrix.columns.2.y, camMatrix.columns.2.z)
+
+        // Posição do entidade (mundo)
+        let boxPos = boxEntity.position(relativeTo: nil)
+
+        // Vetor da câmera para o objeto
+        let toBox = boxPos - camPos
+        let distanceToBox = simd_length(toBox)
+
+        // Se o objeto estiver longe demais, já podemos negar
+        if distanceToBox > captureDistance {
             DispatchQueue.main.async { self.canCapture = false }
+            return
         }
+
+        // Direção normalizada para o objeto e cálculo do ângulo (em graus)
+        let toBoxDir = simd_normalize(toBox)
+        let dot = simd_dot(camForward, toBoxDir)
+        let clampedDot = min(max(dot, -1.0), 1.0)
+        let angleRad = acos(clampedDot)
+        let angleDeg = angleRad * (180.0 / .pi)
+
+        let centeredEnough = angleDeg <= angleThresholdDeg
+
+        DispatchQueue.main.async {
+            self.canCapture = centeredEnough && distanceToBox <= captureDistance
+        }
+
+        // (Opcional) debug - comente/remova depois
+        // print("DEBUG canCapture? dist:\(distanceToBox) angle:\(angleDeg) centered:\(centeredEnough)")
     }
 
     private func rarityEnum(for art: Artropode) async -> PlayerProgress.Rarity {
