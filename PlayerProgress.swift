@@ -40,8 +40,8 @@ final class PlayerProgress: ObservableObject, Codable {
     ]
 
     // MARK: - Inicializadores / Codable
-    init(level: Int = 1, xp: Int = 0) {
-        self.level = max(1, level)
+    init(level: Int = 10, xp: Int = 0) {
+        self.level = max(10, level)
         self.xp = max(0, xp)
         clampLevelAndXP()
     }

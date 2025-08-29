@@ -88,7 +88,7 @@ class ARCoordinator: NSObject, ObservableObject {
         }
 
         if timerLoadInseto == nil {
-            timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            timerLoadInseto = Timer.scheduledTimer(withTimeInterval: 6.0, repeats: true) { [weak self] _ in
                 guard let self = self else { return }
                 if self.boxEntity == nil {
                     self.carregarInsetoAleatorio(anchor: anchor)
